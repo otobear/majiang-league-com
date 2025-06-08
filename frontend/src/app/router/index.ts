@@ -27,8 +27,8 @@ const router = createRouter({
       },
     },
     {
-      path: '/results',
-      component: () => import('@/pages/results'),
+      path: '/tournaments',
+      component: () => import('@/pages/tournament-list'),
       meta: {
         layout: DefaultLayout,
       },

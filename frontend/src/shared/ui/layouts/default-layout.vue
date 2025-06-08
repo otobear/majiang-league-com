@@ -15,7 +15,7 @@
           >選手一覧</router-link
         >
         <router-link
-          to="/results"
+          to="/tournaments"
           class="border-b-2 border-transparent pb-1 transition-colors hover:border-yellow-200 hover:text-yellow-200"
           >対局結果</router-link
         >
