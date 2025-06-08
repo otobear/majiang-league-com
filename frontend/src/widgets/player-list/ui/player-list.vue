@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-4 rounded-lg bg-white p-8 shadow">
+  <div v-if="playersData && playersData.length" class="flex flex-col gap-4 rounded-lg bg-white p-8 shadow">
     <SelectButton
       v-model="aggregationType"
       :options="aggregationTypeOptions"
@@ -7,7 +7,7 @@
       data-key="label"
       :allow-empty="false"
     />
-    <DataTable v-if="playersData && playersData.length" :value="playersData" sortField="rankTotal" :sortOrder="-1">
+    <DataTable :value="playersData" sortField="rankTotal" :sortOrder="-1">
       <Column header="着順">
         <template #body="slotProps">
           {{ slotProps.index + 1 }}
@@ -51,8 +51,8 @@
         <Column header="平均素点" field="pointAverage" sortable />
       </template>
     </DataTable>
-    <LoadingSpinner v-else />
   </div>
+  <LoadingSpinner v-else />
 </template>
 
 <script setup lang="ts">
