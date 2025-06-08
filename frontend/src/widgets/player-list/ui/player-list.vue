@@ -7,7 +7,7 @@
       data-key="label"
       :allow-empty="false"
     />
-    <DataTable :value="playersData" sortField="rankTotal" :sortOrder="-1">
+    <DataTable v-if="playersData && playersData.length" :value="playersData" sortField="rankTotal" :sortOrder="-1">
       <Column header="順位">
         <template #body="slotProps">
           {{ slotProps.index + 1 }}
@@ -50,6 +50,7 @@
         <Column header="得点平均" field="pointAverage" sortable />
       </template>
     </DataTable>
+    <LoadingSpinner v-else />
   </div>
 </template>
 
@@ -58,6 +59,7 @@ import { onMounted, ref } from 'vue'
 import { Column, DataTable, SelectButton } from 'primevue'
 import { fetchPlayers } from '@/entities/player'
 import type { IPlayer } from '@/entities/player'
+import { LoadingSpinner } from '@/shared/ui/loading-spinner'
 
 const aggregationType = ref({ label: '通算', value: 'total' })
 const aggregationTypeOptions = ref([

@@ -22,7 +22,7 @@
       </nav>
     </header>
     <div class="flex flex-1 justify-center bg-gray-100 p-8">
-      <main class="lg:w-5xl xl:w-6xl">
+      <main class="w-5xl xl:w-6xl">
         <slot />
       </main>
     </div>
