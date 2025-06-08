@@ -14,6 +14,6 @@
         fill="none"
       />
     </svg>
-    <span class="ml-3 text-lg text-green-700">読み込み中...</span>
+    <span class="ml-3 text-lg text-green-600">読み込み中...</span>
   </div>
 </template>

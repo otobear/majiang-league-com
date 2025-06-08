@@ -1,6 +1,6 @@
 <template>
   <div class="flex min-h-screen flex-col">
-    <header class="flex h-16 items-center bg-green-700 px-6 text-white shadow">
+    <header class="flex h-16 items-center bg-green-600 px-6 text-white shadow">
       <img src="@/shared/assets/logo.png" alt="Logo" class="mr-4 h-9" />
       <h1 class="flex-1 text-2xl font-bold">ちゅんま関東リーグ</h1>
       <nav class="space-x-6">
