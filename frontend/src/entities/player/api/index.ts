@@ -2,7 +2,7 @@ import type { IPlayer } from '../model'
 
 const mockPlayerData = [
   {
-    id: 1,
+    id: '1',
     name: 'Player 1',
     gameCount: 6,
     rankTotal: 6,
@@ -19,7 +19,7 @@ const mockPlayerData = [
     pointAverage: 197.83,
   },
   {
-    id: 2,
+    id: '2',
     name: 'Player 2',
     gameCount: 6,
     rankTotal: 4,
@@ -36,7 +36,7 @@ const mockPlayerData = [
     pointAverage: 173,
   },
   {
-    id: 3,
+    id: '3',
     name: 'Player 3',
     gameCount: 6,
     rankTotal: 2,
@@ -53,7 +53,7 @@ const mockPlayerData = [
     pointAverage: 78.83,
   },
   {
-    id: 4,
+    id: '4',
     name: 'Player 4',
     gameCount: 6,
     rankTotal: -2,
@@ -70,7 +70,7 @@ const mockPlayerData = [
     pointAverage: -80.17,
   },
   {
-    id: 5,
+    id: '5',
     name: 'Player 5',
     gameCount: 6,
     rankTotal: -4,
@@ -87,7 +87,7 @@ const mockPlayerData = [
     pointAverage: -152,
   },
   {
-    id: 6,
+    id: '6',
     name: 'Player 6',
     gameCount: 6,
     rankTotal: -6,
@@ -113,7 +113,7 @@ export const fetchPlayers = async (): Promise<IPlayer[]> => {
   })
 }
 
-export const fetchPlayerById = async (id: number): Promise<IPlayer | undefined> => {
+export const fetchPlayerById = async (id: string): Promise<IPlayer | undefined> => {
   return new Promise((resolve) => {
     setTimeout(() => {
       const player = mockPlayerData.find((p) => p.id === id)

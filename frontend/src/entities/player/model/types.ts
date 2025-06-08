@@ -1,5 +1,5 @@
 export interface IPlayerResponse {
-  id: number
+  id: string
   name: string
   gameCount: number
   firstPlaceCount: number
@@ -10,7 +10,7 @@ export interface IPlayerResponse {
 }
 
 export interface IPlayer {
-  id: number
+  id: string
   name: string
   gameCount: number
   rankTotal: number

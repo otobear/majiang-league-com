@@ -84,6 +84,6 @@ const route = useRoute()
 const playerData = ref<IPlayer>()
 
 onMounted(async () => {
-  playerData.value = await fetchPlayerById(Number(route.params.id))
+  playerData.value = await fetchPlayerById(route.params.id as string)
 })
 </script>
