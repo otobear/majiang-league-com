@@ -11,6 +11,20 @@ const router = createRouter({
         layout: DefaultLayout,
       },
     },
+    {
+      path: '/players',
+      component: () => import('@/pages/players'),
+      meta: {
+        layout: DefaultLayout,
+      },
+    },
+    {
+      path: '/results',
+      component: () => import('@/pages/results'),
+      meta: {
+        layout: DefaultLayout,
+      },
+    },
   ],
 })
 
