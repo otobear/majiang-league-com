@@ -33,6 +33,14 @@ const router = createRouter({
         layout: DefaultLayout,
       },
     },
+    {
+      path: '/tournament/:id',
+      name: 'tournament',
+      component: () => import('@/pages/tournament'),
+      meta: {
+        layout: DefaultLayout,
+      },
+    },
   ],
 })
 

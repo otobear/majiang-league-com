@@ -74,7 +74,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { Column, DataTable, SelectButton } from 'primevue'
 import { fetchPlayerById } from '@/entities/player'
 import type { IPlayer } from '@/entities/player'
 import { LoadingSpinner } from '@/shared/ui/loading-spinner'

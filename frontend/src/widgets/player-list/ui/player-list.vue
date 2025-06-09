@@ -17,7 +17,7 @@
         <template #body="slotProps">
           <router-link
             :to="{ name: 'player', params: { id: slotProps.data.id } }"
-            class="text-green-700 underline hover:text-green-800"
+            class="text-green-600 underline hover:text-green-800"
           >
             {{ slotProps.data.name }}
           </router-link>
