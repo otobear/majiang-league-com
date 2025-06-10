@@ -10,7 +10,7 @@
     <DataTable :value="playersData" sortField="rankTotal" :sortOrder="-1">
       <Column header="着順">
         <template #body="slotProps">
-          {{ slotProps.index + 1 }}
+          <span class="block text-right">{{ slotProps.index + 1 }}</span>
         </template>
       </Column>
       <Column header="選手名" field="name">
@@ -23,32 +23,74 @@
           </router-link>
         </template>
       </Column>
-      <Column header="対局数" field="gameCount" sortable />
+      <Column header="対局数" field="gameCount" sortable>
+        <template #body="slotProps">
+          <span class="block text-right">{{ slotProps.data.gameCount }}</span>
+        </template>
+      </Column>
       <template v-if="aggregationType.value === 'total'">
-        <Column header="通算着順" field="rankTotal" sortable />
-        <Column header="1着数" field="firstPlaceCount" sortable />
-        <Column header="2着数" field="secondPlaceCount" sortable />
-        <Column header="3着数" field="thirdPlaceCount" sortable />
-        <Column header="4着数" field="fourthPlaceCount" sortable />
-        <Column header="通算素点" field="pointTotal" sortable />
+        <Column header="通算着順" field="rankTotal" sortable>
+          <template #body="slotProps">
+            <span class="block text-right">{{ slotProps.data.rankTotal }}</span>
+          </template>
+        </Column>
+        <Column header="1着数" field="firstPlaceCount" sortable>
+          <template #body="slotProps">
+            <span class="block text-right">{{ slotProps.data.firstPlaceCount }}</span>
+          </template>
+        </Column>
+        <Column header="2着数" field="secondPlaceCount" sortable>
+          <template #body="slotProps">
+            <span class="block text-right">{{ slotProps.data.secondPlaceCount }}</span>
+          </template>
+        </Column>
+        <Column header="3着数" field="thirdPlaceCount" sortable>
+          <template #body="slotProps">
+            <span class="block text-right">{{ slotProps.data.thirdPlaceCount }}</span>
+          </template>
+        </Column>
+        <Column header="4着数" field="fourthPlaceCount" sortable>
+          <template #body="slotProps">
+            <span class="block text-right">{{ slotProps.data.fourthPlaceCount }}</span>
+          </template>
+        </Column>
+        <Column header="通算素点" field="pointTotal" sortable>
+          <template #body="slotProps">
+            <span class="block text-right">{{ slotProps.data.pointTotal }}</span>
+          </template>
+        </Column>
       </template>
       <template v-else>
         <Column header="平均着順" field="rankAverage" sortable>
-          <template #body="slotProps">{{ slotProps.data.rankAverage.toFixed(2) }}</template>
+          <template #body="slotProps">
+            <span class="block text-right">{{ slotProps.data.rankAverage.toFixed(2) }}</span>
+          </template>
         </Column>
         <Column header="1着率" field="firstPlacePercentage" sortable>
-          <template #body="slotProps">{{ slotProps.data.firstPlacePercentage.toFixed(0) }}%</template>
+          <template #body="slotProps">
+            <span class="block text-right">{{ slotProps.data.firstPlacePercentage.toFixed(0) }}%</span>
+          </template>
         </Column>
         <Column header="2着率" field="secondPlacePercentage" sortable>
-          <template #body="slotProps">{{ slotProps.data.secondPlacePercentage.toFixed(0) }}%</template>
+          <template #body="slotProps">
+            <span class="block text-right">{{ slotProps.data.secondPlacePercentage.toFixed(0) }}%</span>
+          </template>
         </Column>
         <Column header="3着率" field="thirdPlacePercentage" sortable>
-          <template #body="slotProps">{{ slotProps.data.thirdPlacePercentage.toFixed(0) }}%</template>
+          <template #body="slotProps">
+            <span class="block text-right">{{ slotProps.data.thirdPlacePercentage.toFixed(0) }}%</span>
+          </template>
         </Column>
         <Column header="4着率" field="fourthPlacePercentage" sortable>
-          <template #body="slotProps">{{ slotProps.data.fourthPlacePercentage.toFixed(0) }}%</template>
+          <template #body="slotProps">
+            <span class="block text-right">{{ slotProps.data.fourthPlacePercentage.toFixed(0) }}%</span>
+          </template>
         </Column>
-        <Column header="平均素点" field="pointAverage" sortable />
+        <Column header="平均素点" field="pointAverage" sortable>
+          <template #body="slotProps">
+            <span class="block text-right">{{ slotProps.data.pointAverage }}</span>
+          </template>
+        </Column>
       </template>
     </DataTable>
   </div>
