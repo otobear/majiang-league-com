@@ -17,6 +17,7 @@
   "dependencies": {
     "@primeuix/themes": "^1.1.1",
     "@tailwindcss/vite": "^4.1.8",
+    "openapi-fetch": "^0.14.0",
     "pinia": "^3.0.1",
     "primevue": "^4.3.5",
     "tailwindcss": "^4.1.8",
