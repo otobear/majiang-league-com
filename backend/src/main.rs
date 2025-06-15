@@ -5,14 +5,15 @@ use axum::{
 };
 use serde::{Deserialize, Serialize};
 use sqlx::{postgres::PgPool};
+use utoipa::{OpenApi, ToSchema};
 
-#[derive(Serialize, Deserialize, sqlx::FromRow, Debug)]
+#[derive(Serialize, Deserialize, sqlx::FromRow, Debug, ToSchema)]
 struct Player {
     id: i32,
     name: String,
 }
 
-#[derive(Serialize, Deserialize, sqlx::FromRow, Debug)]
+#[derive(Serialize, Deserialize, sqlx::FromRow, Debug, ToSchema)]
 struct PlayerStats {
     player_id: i32,
     player_name: String,
@@ -46,13 +47,20 @@ async fn main() {
         .route("/players", get(get_players))
         .route("/player_stats", get(get_player_stats));
 
+    // TODO: set up Swagger UI
+    // let swagger_ui = SwaggerUi::new("/swagger-ui").url("/api-doc/openapi.json", ApiDoc::openapi());
+
     let app = Router::new()
         .nest("/api", api_routes)
         .with_state(pool);
 
+    let openapi_json = ApiDoc::openapi().to_json().unwrap();
+    std::fs::write("openapi.json", openapi_json).expect("Failed to write openapi.json");
+
     let listener = tokio::net::TcpListener::bind("0.0.0.0:8000")
         .await
         .expect("Failed to bind TCP listener");
+
     axum::serve(listener, app)
         .await
         .expect("Failed to start server");
@@ -62,9 +70,16 @@ async fn root() -> &'static str {
     "Welcome to the Axum server!"
 }
 
+#[utoipa::path(
+    get,
+    path = "/api/players",
+    responses(
+        (status = 200, description = "玩家列表", body = [Player])
+    )
+)]
 async fn get_players(
     State(pool): State<PgPool>,
-) ->  Json<Vec<Player>> {
+) -> Json<Vec<Player>> {
     let players = sqlx::query_as::<_, Player>("SELECT id, name FROM players")
         .fetch_all(&pool)
         .await
@@ -73,6 +88,13 @@ async fn get_players(
     Json(players)
 }
 
+#[utoipa::path(
+    get,
+    path = "/api/player_stats",
+    responses(
+        (status = 200, description = "玩家统计", body = [PlayerStats])
+    )
+)]
 async fn get_player_stats(
     State(pool): State<PgPool>,
 ) -> Json<Vec<PlayerStats>> {
@@ -83,3 +105,10 @@ async fn get_player_stats(
 
     Json(stats)
 }
+
+#[derive(OpenApi)]
+#[openapi(
+    paths(get_players, get_player_stats),
+    components(schemas(Player, PlayerStats))
+)]
+struct ApiDoc;
