@@ -6,6 +6,8 @@ use axum::{
 use serde::{Deserialize, Serialize};
 use sqlx::{postgres::PgPool};
 use utoipa::{OpenApi, ToSchema};
+use axum::http::Method;
+use tower_http::cors::{CorsLayer, Any};
 
 #[derive(Serialize, Deserialize, sqlx::FromRow, Debug, ToSchema)]
 struct Player {
@@ -50,9 +52,15 @@ async fn main() {
     // TODO: set up Swagger UI
     // let swagger_ui = SwaggerUi::new("/swagger-ui").url("/api-doc/openapi.json", ApiDoc::openapi());
 
+    let cors = CorsLayer::new()
+        .allow_origin(Any)
+        .allow_methods([Method::GET, Method::POST, Method::PUT, Method::DELETE])
+        .allow_headers(Any);
+
     let app = Router::new()
-        .nest("/api", api_routes)
-        .with_state(pool);
+        .nest("/api/v1", api_routes)
+        .with_state(pool)
+        .layer(cors); // 添加 CORS 中间件
 
     let openapi_json = ApiDoc::openapi().to_json().unwrap();
     std::fs::write("openapi.json", openapi_json).expect("Failed to write openapi.json");
@@ -72,7 +80,7 @@ async fn root() -> &'static str {
 
 #[utoipa::path(
     get,
-    path = "/api/players",
+    path = "/api/v1/players",
     responses(
         (status = 200, description = "玩家列表", body = [Player])
     )
@@ -90,7 +98,7 @@ async fn get_players(
 
 #[utoipa::path(
     get,
-    path = "/api/player_stats",
+    path = "/api/v1/player_stats",
     responses(
         (status = 200, description = "玩家统计", body = [PlayerStats])
     )
