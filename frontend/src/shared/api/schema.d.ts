@@ -11,7 +11,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["get_player_stats"];
+        get: operations["get_player_stats_list"];
         put?: never;
         post?: never;
         delete?: never;
@@ -20,14 +20,14 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/players": {
+    "/api/v1/player_stats/{player_id}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["get_players"];
+        get: operations["get_player_stats"];
         put?: never;
         post?: never;
         delete?: never;
@@ -40,11 +40,6 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        Player: {
-            /** Format: int32 */
-            id: number;
-            name: string;
-        };
         PlayerStats: {
             /** Format: float */
             avg_gp?: number | null;
@@ -89,7 +84,7 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    get_player_stats: {
+    get_player_stats_list: {
         parameters: {
             query?: never;
             header?: never;
@@ -109,23 +104,33 @@ export interface operations {
             };
         };
     };
-    get_players: {
+    get_player_stats: {
         parameters: {
             query?: never;
             header?: never;
-            path?: never;
+            path: {
+                /** @description 玩家ID */
+                player_id: number;
+            };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description 玩家列表 */
+            /** @description 玩家统计 */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Player"][];
+                    "application/json": components["schemas"]["PlayerStats"];
                 };
+            };
+            /** @description 玩家未找到 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

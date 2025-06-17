@@ -1,5 +1,5 @@
 export interface IPlayer {
-  id: string
+  id: number
   name: string
   gameCount: number
   gpTotal: number

@@ -23,11 +23,6 @@
           </router-link>
         </template>
       </Column>
-      <Column header="対局数" field="gameCount" sortable>
-        <template #body="slotProps">
-          <span class="block text-right">{{ slotProps.data.gameCount }}</span>
-        </template>
-      </Column>
       <template v-if="aggregationType.value === 'total'">
         <Column header="総合着順" field="rpTotal" sortable>
           <template #body="slotProps">
@@ -100,7 +95,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { Column, DataTable, SelectButton } from 'primevue'
-import { fetchPlayers } from '@/entities/player'
+import { fetchPlayerStatsList } from '@/entities/player'
 import type { IPlayer } from '@/entities/player'
 import { LoadingSpinner } from '@/shared/ui/loading-spinner'
 
@@ -113,6 +108,6 @@ const aggregationTypeOptions = ref([
 const playersData = ref<IPlayer[]>([])
 
 onMounted(async () => {
-  playersData.value = await fetchPlayers()
+  playersData.value = await fetchPlayerStatsList()
 })
 </script>

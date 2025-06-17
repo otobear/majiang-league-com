@@ -48,8 +48,8 @@ async fn main() {
 
     let api_routes = Router::new()
         .route("/", get(root))
-        .route("/players", get(get_players))
-        .route("/player_stats", get(get_player_stats));
+        .route("/player_stats", get(get_player_stats_list))
+        .route("/player_stats/:player_id", get(get_player_stats));
 
     // TODO: set up Swagger UI
     // let swagger_ui = SwaggerUi::new("/swagger-ui").url("/api-doc/openapi.json", ApiDoc::openapi());
@@ -82,30 +82,12 @@ async fn root() -> &'static str {
 
 #[utoipa::path(
     get,
-    path = "/api/v1/players",
-    responses(
-        (status = 200, description = "玩家列表", body = [Player])
-    )
-)]
-async fn get_players(
-    State(pool): State<PgPool>,
-) -> Json<Vec<Player>> {
-    let players = sqlx::query_as::<_, Player>("SELECT id, name FROM players")
-        .fetch_all(&pool)
-        .await
-        .expect("Failed to fetch players");
-
-    Json(players)
-}
-
-#[utoipa::path(
-    get,
     path = "/api/v1/player_stats",
     responses(
         (status = 200, description = "玩家统计", body = [PlayerStats])
     )
 )]
-async fn get_player_stats(
+async fn get_player_stats_list(
     State(pool): State<PgPool>,
 ) -> Json<Vec<PlayerStats>> {
     let stats = sqlx::query_as::<_, PlayerStats>("SELECT * FROM player_stats")
@@ -116,9 +98,33 @@ async fn get_player_stats(
     Json(stats)
 }
 
+#[utoipa::path(
+    get,
+    path = "/api/v1/player_stats/{player_id}",
+    params(
+        ("player_id" = i32, Path, description = "玩家ID")
+    ),
+    responses(
+        (status = 200, description = "玩家统计", body = PlayerStats),
+        (status = 404, description = "玩家未找到")
+    )
+)]
+async fn get_player_stats(
+    State(pool): State<PgPool>,
+    axum::extract::Path(player_id): axum::extract::Path<i32>,
+) -> Result<Json<PlayerStats>, axum::http::StatusCode> {
+    let stats = sqlx::query_as::<_, PlayerStats>("SELECT * FROM player_stats WHERE player_id = $1")
+        .bind(player_id)
+        .fetch_one(&pool)
+        .await
+        .map_err(|_| axum::http::StatusCode::NOT_FOUND)?;
+
+    Ok(Json(stats))
+}
+
 #[derive(OpenApi)]
 #[openapi(
-    paths(get_players, get_player_stats),
-    components(schemas(Player, PlayerStats))
+    paths(get_player_stats_list, get_player_stats),
+    components(schemas(PlayerStats, PlayerStats))
 )]
 struct ApiDoc;
