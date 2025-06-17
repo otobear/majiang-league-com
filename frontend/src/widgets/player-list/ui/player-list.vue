@@ -7,7 +7,7 @@
       data-key="label"
       :allow-empty="false"
     />
-    <DataTable :value="playersData" sortField="rankTotal" :sortOrder="-1">
+    <DataTable :value="playersData" sortField="rpTotal" :sortOrder="-1">
       <Column header="着順">
         <template #body="slotProps">
           <span class="block text-right">{{ slotProps.index + 1 }}</span>
@@ -29,9 +29,9 @@
         </template>
       </Column>
       <template v-if="aggregationType.value === 'total'">
-        <Column header="通算着順" field="rankTotal" sortable>
+        <Column header="総合着順" field="rpTotal" sortable>
           <template #body="slotProps">
-            <span class="block text-right">{{ slotProps.data.rankTotal }}</span>
+            <span class="block text-right">{{ slotProps.data.rpTotal }}</span>
           </template>
         </Column>
         <Column header="1着数" field="firstPlaceCount" sortable>
@@ -54,16 +54,16 @@
             <span class="block text-right">{{ slotProps.data.fourthPlaceCount }}</span>
           </template>
         </Column>
-        <Column header="通算素点" field="pointTotal" sortable>
+        <Column header="通算素点" field="gpTotal" sortable>
           <template #body="slotProps">
-            <span class="block text-right">{{ slotProps.data.pointTotal }}</span>
+            <span class="block text-right">{{ slotProps.data.gpTotal }}</span>
           </template>
         </Column>
       </template>
       <template v-else>
-        <Column header="平均着順" field="rankAverage" sortable>
+        <Column header="平均着順" field="tpAvg" sortable>
           <template #body="slotProps">
-            <span class="block text-right">{{ slotProps.data.rankAverage.toFixed(2) }}</span>
+            <span class="block text-right">{{ (5 - slotProps.data.tpAvg).toFixed(2) }}</span>
           </template>
         </Column>
         <Column header="1着率" field="firstPlacePercentage" sortable>
@@ -86,9 +86,9 @@
             <span class="block text-right">{{ slotProps.data.fourthPlacePercentage.toFixed(0) }}%</span>
           </template>
         </Column>
-        <Column header="平均素点" field="pointAverage" sortable>
+        <Column header="平均素点" field="gpAvg" sortable>
           <template #body="slotProps">
-            <span class="block text-right">{{ slotProps.data.pointAverage }}</span>
+            <span class="block text-right">{{ slotProps.data.gpAvg }}</span>
           </template>
         </Column>
       </template>

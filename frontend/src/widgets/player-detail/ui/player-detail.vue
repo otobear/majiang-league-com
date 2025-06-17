@@ -17,7 +17,7 @@
               <i class="pi pi-trophy text-2xl text-gray-600"></i>
             </template>
             <template #label>通算着順</template>
-            <template #value>{{ playerData.rankTotal }}</template>
+            <template #value>{{ playerData.rpTotal }}</template>
             <template #unit>pt</template>
           </StatusCard>
           <StatusCard>
@@ -25,7 +25,7 @@
               <i class="pi pi-chart-line text-2xl text-gray-600"></i>
             </template>
             <template #label>平均着順</template>
-            <template #value>{{ playerData.rankAverage.toFixed(2) }}</template>
+            <template #value>{{ playerData.tpAvg.toFixed(2) }}</template>
             <template #unit>位</template>
           </StatusCard>
           <StatusCard>
@@ -33,7 +33,7 @@
               <i class="pi pi-star text-2xl text-gray-600"></i>
             </template>
             <template #label>通算素点</template>
-            <template #value>{{ playerData.pointTotal }}</template>
+            <template #value>{{ playerData.gpTotal }}</template>
             <template #unit>pt</template>
           </StatusCard>
           <StatusCard>
@@ -41,7 +41,7 @@
               <i class="pi pi-chart-line text-2xl text-gray-600"></i>
             </template>
             <template #label>平均素点</template>
-            <template #value>{{ playerData.pointAverage.toFixed(2) }}</template>
+            <template #value>{{ playerData.gpAvg.toFixed(2) }}</template>
             <template #unit>pt</template>
           </StatusCard>
         </div>

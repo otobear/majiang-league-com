@@ -1,28 +1,19 @@
-export interface IPlayerResponse {
-  id: string
-  name: string
-  gameCount: number
-  firstPlaceCount: number
-  secondPlaceCount: number
-  thirdPlaceCount: number
-  fourthPlaceCount: number
-  pointTotal: number
-}
-
 export interface IPlayer {
   id: string
   name: string
   gameCount: number
-  rankTotal: number
+  gpTotal: number
+  tpTotal: number
+  rpTotal: number
   firstPlaceCount: number
   secondPlaceCount: number
   thirdPlaceCount: number
   fourthPlaceCount: number
-  pointTotal: number
-  rankAverage: number
+  gpAvg: number
+  tpAvg: number
+  rpAvg: number
   firstPlacePercentage: number
   secondPlacePercentage: number
   thirdPlacePercentage: number
   fourthPlacePercentage: number
-  pointAverage: number
 }

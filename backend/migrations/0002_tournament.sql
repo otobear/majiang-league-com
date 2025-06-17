@@ -39,6 +39,7 @@ SELECT
   p.name AS player_name,
   COUNT(gpr.id) AS game_count,
   SUM(gpr.game_point) AS total_gp,
+  SUM(gpr.table_point) AS total_tp,
   SUM(
     CASE gpr.table_point
       WHEN 4 THEN 3
@@ -47,12 +48,13 @@ SELECT
       WHEN 1 THEN -3
       ELSE 0
     END
-  ) AS total_tp,
+  ) AS total_rp,
   COUNT(*) FILTER (WHERE gpr.table_point = 4) AS first_place_count,
   COUNT(*) FILTER (WHERE gpr.table_point = 3) AS second_place_count,
   COUNT(*) FILTER (WHERE gpr.table_point = 2) AS third_place_count,
   COUNT(*) FILTER (WHERE gpr.table_point = 1) AS fourth_place_count,
   AVG(gpr.game_point)::FLOAT4 AS avg_gp,
+  AVG(gpr.table_point)::FLOAT4 AS avg_tp,
   AVG(
     CASE gpr.table_point
       WHEN 4 THEN 3
@@ -61,7 +63,7 @@ SELECT
       WHEN 1 THEN -3
       ELSE 0
     END
-  )::FLOAT4 AS avg_tp,
+  )::FLOAT4 AS avg_rp,
   ROUND(100.0 * COUNT(*) FILTER (WHERE gpr.table_point = 4) / NULLIF(COUNT(*),0), 2)::FLOAT4 AS first_place_ratio,
   ROUND(100.0 * COUNT(*) FILTER (WHERE gpr.table_point = 3) / NULLIF(COUNT(*),0), 2)::FLOAT4 AS second_place_ratio,
   ROUND(100.0 * COUNT(*) FILTER (WHERE gpr.table_point = 2) / NULLIF(COUNT(*),0), 2)::FLOAT4 AS third_place_ratio,
