@@ -36,6 +36,10 @@ struct PlayerStats {
     fourth_place_ratio: Option<f32>,
 }
 
+async fn health() -> Json<serde_json::Value> {
+    Json(serde_json::json!({ "status": "ok" }))
+}
+
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt::init();
@@ -48,6 +52,7 @@ async fn main() {
 
     let api_routes = Router::new()
         .route("/", get(root))
+        .route("/health", get(health))
         .route("/player_stats", get(get_player_stats_list))
         .route("/player_stats/:player_id", get(get_player_stats));
 
