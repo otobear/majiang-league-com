@@ -4,134 +4,134 @@
  */
 
 export interface paths {
-    "/api/v1/player_stats": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["get_player_stats_list"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/player_stats/{player_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["get_player_stats"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
+  '/api/v1/player_stats': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations['get_player_stats_list']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/v1/player_stats/{player_id}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations['get_player_stats']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
 }
-export type webhooks = Record<string, never>;
+export type webhooks = Record<string, never>
 export interface components {
-    schemas: {
-        PlayerStats: {
-            /** Format: float */
-            avg_gp?: number | null;
-            /** Format: float */
-            avg_rp?: number | null;
-            /** Format: float */
-            avg_tp?: number | null;
-            /** Format: int64 */
-            first_place_count?: number | null;
-            /** Format: float */
-            first_place_ratio?: number | null;
-            /** Format: int64 */
-            fourth_place_count?: number | null;
-            /** Format: float */
-            fourth_place_ratio?: number | null;
-            /** Format: int64 */
-            game_count?: number | null;
-            /** Format: int32 */
-            player_id: number;
-            player_name: string;
-            /** Format: int64 */
-            second_place_count?: number | null;
-            /** Format: float */
-            second_place_ratio?: number | null;
-            /** Format: int64 */
-            third_place_count?: number | null;
-            /** Format: float */
-            third_place_ratio?: number | null;
-            /** Format: int64 */
-            total_gp?: number | null;
-            /** Format: int64 */
-            total_rp?: number | null;
-            /** Format: int64 */
-            total_tp?: number | null;
-        };
-    };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+  schemas: {
+    PlayerStats: {
+      /** Format: float */
+      avg_gp?: number | null
+      /** Format: float */
+      avg_rp?: number | null
+      /** Format: float */
+      avg_tp?: number | null
+      /** Format: int64 */
+      first_place_count?: number | null
+      /** Format: float */
+      first_place_ratio?: number | null
+      /** Format: int64 */
+      fourth_place_count?: number | null
+      /** Format: float */
+      fourth_place_ratio?: number | null
+      /** Format: int64 */
+      game_count?: number | null
+      /** Format: int32 */
+      player_id: number
+      player_name: string
+      /** Format: int64 */
+      second_place_count?: number | null
+      /** Format: float */
+      second_place_ratio?: number | null
+      /** Format: int64 */
+      third_place_count?: number | null
+      /** Format: float */
+      third_place_ratio?: number | null
+      /** Format: int64 */
+      total_gp?: number | null
+      /** Format: int64 */
+      total_rp?: number | null
+      /** Format: int64 */
+      total_tp?: number | null
+    }
+  }
+  responses: never
+  parameters: never
+  requestBodies: never
+  headers: never
+  pathItems: never
 }
-export type $defs = Record<string, never>;
+export type $defs = Record<string, never>
 export interface operations {
-    get_player_stats_list: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 玩家统计 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PlayerStats"][];
-                };
-            };
-        };
-    };
-    get_player_stats: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description 玩家ID */
-                player_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description 玩家统计 */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PlayerStats"];
-                };
-            };
-            /** @description 玩家未找到 */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
+  get_player_stats_list: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description 玩家统计 */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['PlayerStats'][]
+        }
+      }
+    }
+  }
+  get_player_stats: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        /** @description 玩家ID */
+        player_id: number
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description 玩家统计 */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['PlayerStats']
+        }
+      }
+      /** @description 玩家未找到 */
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+    }
+  }
 }

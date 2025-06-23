@@ -93,7 +93,7 @@
         <h2 class="mb-2 text-lg font-semibold">対局詳細</h2>
         <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
           <div
-            v-for="(session, idx) in tournamentData.sessions.slice(0, Math.ceil(tournamentData.sessions.length / 2))"
+            v-for="session in tournamentData.sessions.slice(0, Math.ceil(tournamentData.sessions.length / 2))"
             :key="session.info.id"
             class="mb-6"
           >
@@ -133,7 +133,7 @@
             </DataTable>
           </div>
           <div
-            v-for="(session, idx) in tournamentData.sessions.slice(Math.ceil(tournamentData.sessions.length / 2))"
+            v-for="session in tournamentData.sessions.slice(Math.ceil(tournamentData.sessions.length / 2))"
             :key="session.info.id"
             class="mb-6"
           >
