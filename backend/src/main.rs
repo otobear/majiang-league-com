@@ -65,7 +65,7 @@ async fn main() {
 
     let app = Router::new()
         .route("/health", get(health))
-        .nest("/api/v1", api_routes)
+        .nest("/v1", api_routes)
         .with_state(pool)
         .layer(cors);
 
@@ -87,7 +87,7 @@ async fn root() -> &'static str {
 
 #[utoipa::path(
     get,
-    path = "/api/v1/player_stats",
+    path = "/v1/player_stats",
     responses(
         (status = 200, description = "玩家统计", body = [PlayerStats])
     )
@@ -105,7 +105,7 @@ async fn get_player_stats_list(
 
 #[utoipa::path(
     get,
-    path = "/api/v1/player_stats/{player_id}",
+    path = "/v1/player_stats/{player_id}",
     params(
         ("player_id" = i32, Path, description = "玩家ID")
     ),

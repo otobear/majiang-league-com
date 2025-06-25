@@ -236,7 +236,7 @@ show_deployment_summary() {
     
     echo "  🌐 API Endpoint: http://${ALB_DNS}"
     echo "  🔍 Health Check: http://${ALB_DNS}/health"
-    echo "  📊 Player Stats: http://${ALB_DNS}/api/v1/player_stats"
+    echo "  📊 Player Stats: http://${ALB_DNS}/v1/player_stats"
     echo ""
     
     print_info "Next Steps:"
@@ -265,7 +265,7 @@ test_deployment() {
     
     # Test API endpoint
     print_info "Testing API endpoint..."
-    if curl -s -f "http://${ALB_DNS}/api/v1/player_stats" >/dev/null; then
+    if curl -s -f "http://${ALB_DNS}/v1/player_stats" >/dev/null; then
         print_success "API endpoint responding"
     else
         print_warning "API endpoint not ready yet or returning errors"

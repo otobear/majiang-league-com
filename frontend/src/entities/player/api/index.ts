@@ -3,7 +3,7 @@ import { baseApi } from '@/shared/api'
 import type { paths } from '@/shared/api'
 
 type ApiPlayer = NonNullable<
-  paths['/api/v1/player_stats']['get']['responses']['200']['content']['application/json']
+  paths['/v1/player_stats']['get']['responses']['200']['content']['application/json']
 >[number]
 
 function toIPlayer(item: ApiPlayer): IPlayer {
@@ -29,13 +29,13 @@ function toIPlayer(item: ApiPlayer): IPlayer {
 }
 
 export const fetchPlayerStatsList = async (): Promise<IPlayer[]> => {
-  const res = await baseApi.GET('/api/v1/player_stats')
+  const res = await baseApi.GET('/v1/player_stats')
 
   return (res.data ?? []).map(toIPlayer)
 }
 
 export const fetchPlayerStatsById = async (playerId: number): Promise<IPlayer | null> => {
-  const res = await baseApi.GET('/api/v1/player_stats/{player_id}', {
+  const res = await baseApi.GET('/v1/player_stats/{player_id}', {
     params: {
       path: { player_id: playerId },
     },
