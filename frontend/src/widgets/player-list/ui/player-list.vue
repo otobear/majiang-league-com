@@ -23,6 +23,11 @@
           </router-link>
         </template>
       </Column>
+      <Column header="対局数" field="gameCount" sortable>
+        <template #body="slotProps">
+          <span class="block text-right">{{ slotProps.data.gameCount }}</span>
+        </template>
+      </Column>
       <template v-if="aggregationType.value === 'total'">
         <Column header="総合着順" field="rpTotal" sortable>
           <template #body="slotProps">
