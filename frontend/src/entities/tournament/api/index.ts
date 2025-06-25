@@ -13,7 +13,7 @@ const mockTournamentData = [
       {
         playerId: '5',
         playerName: '柏木拓',
-        tournamentRank: 1,
+        tournamentPlace: 1,
         totalPoint: {
           tablePoint: 14,
           gamePoint: 175,
@@ -28,7 +28,7 @@ const mockTournamentData = [
       {
         playerId: '3',
         playerName: '遠藤俊晃',
-        tournamentRank: 2,
+        tournamentPlace: 2,
         totalPoint: {
           tablePoint: 12,
           gamePoint: 8,
@@ -43,7 +43,7 @@ const mockTournamentData = [
       {
         playerId: '10',
         playerName: '手塚ゆり',
-        tournamentRank: 3,
+        tournamentPlace: 3,
         totalPoint: {
           tablePoint: 11.5,
           gamePoint: 188,
@@ -58,7 +58,7 @@ const mockTournamentData = [
       {
         playerId: '7',
         playerName: '小林英夫',
-        tournamentRank: 4,
+        tournamentPlace: 4,
         totalPoint: {
           tablePoint: 11,
           gamePoint: 93,
@@ -73,7 +73,7 @@ const mockTournamentData = [
       {
         playerId: '11',
         playerName: '田籠謙介',
-        tournamentRank: 5,
+        tournamentPlace: 5,
         totalPoint: {
           tablePoint: 9,
           gamePoint: 33,
@@ -88,7 +88,7 @@ const mockTournamentData = [
       {
         playerId: '12',
         playerName: '柴崎健司',
-        tournamentRank: 6,
+        tournamentPlace: 6,
         totalPoint: {
           tablePoint: 8,
           gamePoint: -81,
@@ -103,7 +103,7 @@ const mockTournamentData = [
       {
         playerId: '6',
         playerName: '二萬章吾',
-        tournamentRank: 7,
+        tournamentPlace: 7,
         totalPoint: {
           tablePoint: 8,
           gamePoint: -176,
@@ -118,7 +118,7 @@ const mockTournamentData = [
       {
         playerId: '2',
         playerName: '赤塚修',
-        tournamentRank: 8,
+        tournamentPlace: 8,
         totalPoint: {
           tablePoint: 6.5,
           gamePoint: -240,
@@ -258,7 +258,7 @@ const mockTournamentData = [
       {
         playerId: '1',
         playerName: '土屋政士',
-        tournamentRank: 1,
+        tournamentPlace: 1,
         totalPoint: {
           tablePoint: 13,
           gamePoint: 462,
@@ -273,7 +273,7 @@ const mockTournamentData = [
       {
         playerId: '2',
         playerName: '赤塚修',
-        tournamentRank: 2,
+        tournamentPlace: 2,
         totalPoint: {
           tablePoint: 12,
           gamePoint: 54,
@@ -288,7 +288,7 @@ const mockTournamentData = [
       {
         playerId: '3',
         playerName: '遠藤俊晃',
-        tournamentRank: 3,
+        tournamentPlace: 3,
         totalPoint: {
           tablePoint: 11,
           gamePoint: 145,
@@ -303,7 +303,7 @@ const mockTournamentData = [
       {
         playerId: '4',
         playerName: '左永',
-        tournamentRank: 4,
+        tournamentPlace: 4,
         totalPoint: {
           tablePoint: 10,
           gamePoint: 48,
@@ -318,7 +318,7 @@ const mockTournamentData = [
       {
         playerId: '5',
         playerName: '柏木拓',
-        tournamentRank: 5,
+        tournamentPlace: 5,
         totalPoint: {
           tablePoint: 10,
           gamePoint: 25,
@@ -333,7 +333,7 @@ const mockTournamentData = [
       {
         playerId: '6',
         playerName: '二萬章吾',
-        tournamentRank: 6,
+        tournamentPlace: 6,
         totalPoint: {
           tablePoint: 9,
           gamePoint: -89,
@@ -348,7 +348,7 @@ const mockTournamentData = [
       {
         playerId: '7',
         playerName: '小林英夫',
-        tournamentRank: 7,
+        tournamentPlace: 7,
         totalPoint: {
           tablePoint: 8,
           gamePoint: -262,
@@ -363,7 +363,7 @@ const mockTournamentData = [
       {
         playerId: '8',
         playerName: '石橋大助',
-        tournamentRank: 8,
+        tournamentPlace: 8,
         totalPoint: {
           tablePoint: 6,
           gamePoint: -383,

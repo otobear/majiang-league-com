@@ -34,7 +34,7 @@
           <Column header="素点" />
         </Row>
       </ColumnGroup>
-      <Column field="tournamentRank" :body-class="'text-right'" />
+      <Column field="tournamentPlace" :body-class="'text-right'" />
       <Column field="playerName">
         <template #body="slotProps">
           <router-link

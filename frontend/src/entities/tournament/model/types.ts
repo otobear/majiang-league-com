@@ -8,7 +8,7 @@ export interface IPlayerResponse {
   summary: {
     playerId: string
     playerName: string
-    tournamentRank: number
+    tournamentPlace: number
     totalPoint: {
       tablePoint: number
       gamePoint: number
@@ -47,7 +47,7 @@ export interface ITournament {
   summary: {
     playerId: string
     playerName: string
-    tournamentRank: number
+    tournamentPlace: number
     totalPoint: {
       tablePoint: number
       gamePoint: number

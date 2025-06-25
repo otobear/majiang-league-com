@@ -50,7 +50,7 @@
         <div class="flex flex-1 flex-col gap-8">
           <div class="rounded-lg bg-white p-8 shadow">
             <p class="text-xl font-semibold">着順分布</p>
-            <DataTable :value="rankDistribution" class="text-end">
+            <DataTable :value="placeDistribution" class="text-end">
               <Column field="label" class="bg-gray-100" />
               <Column field="count">
                 <template #body="slotProps">
@@ -92,7 +92,7 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { Column, DataTable, SelectButton } from 'primevue'
+import { Column, DataTable } from 'primevue'
 import { fetchPlayerStatsById } from '@/entities/player'
 import type { IPlayer } from '@/entities/player'
 import { LoadingSpinner } from '@/shared/ui/loading-spinner'
@@ -100,7 +100,7 @@ import StatusCard from './player-detail-main-status-card.vue'
 
 const route = useRoute()
 const playerData = ref<IPlayer | null>()
-const rankDistribution = computed(() => [
+const placeDistribution = computed(() => [
   { label: '1位', count: playerData.value?.firstPlaceCount || 0, ratio: playerData.value?.firstPlacePercentage || 0 },
   { label: '2位', count: playerData.value?.secondPlaceCount || 0, ratio: playerData.value?.secondPlacePercentage || 0 },
   { label: '3位', count: playerData.value?.thirdPlaceCount || 0, ratio: playerData.value?.thirdPlacePercentage || 0 },
