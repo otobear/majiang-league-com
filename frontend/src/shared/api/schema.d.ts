@@ -40,6 +40,28 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        GameDetail: {
+            /** Format: int32 */
+            game_id: number;
+            players: components["schemas"]["PlayerGameResult"][];
+            session_name: string;
+            /** Format: date */
+            tournament_date: string;
+            tournament_location: string;
+            tournament_name: string;
+            tournament_sub_name: string;
+        };
+        PlayerGameResult: {
+            /** Format: int32 */
+            game_point: number;
+            /** Format: int32 */
+            place_point: number;
+            /** Format: int32 */
+            player_id: number;
+            player_name: string;
+            /** Format: int32 */
+            table_point: number;
+        };
         PlayerStats: {
             /** Format: float */
             avg_gp?: number | null;
@@ -57,6 +79,42 @@ export interface components {
             fourth_place_ratio?: number | null;
             /** Format: int64 */
             game_count?: number | null;
+            /** Format: int32 */
+            player_id: number;
+            player_name: string;
+            /** Format: int64 */
+            second_place_count?: number | null;
+            /** Format: float */
+            second_place_ratio?: number | null;
+            /** Format: int64 */
+            third_place_count?: number | null;
+            /** Format: float */
+            third_place_ratio?: number | null;
+            /** Format: int64 */
+            total_gp?: number | null;
+            /** Format: int64 */
+            total_rp?: number | null;
+            /** Format: int64 */
+            total_tp?: number | null;
+        };
+        PlayerStatsWithGames: {
+            /** Format: float */
+            avg_gp?: number | null;
+            /** Format: float */
+            avg_rp?: number | null;
+            /** Format: float */
+            avg_tp?: number | null;
+            /** Format: int64 */
+            first_place_count?: number | null;
+            /** Format: float */
+            first_place_ratio?: number | null;
+            /** Format: int64 */
+            fourth_place_count?: number | null;
+            /** Format: float */
+            fourth_place_ratio?: number | null;
+            /** Format: int64 */
+            game_count?: number | null;
+            game_details: components["schemas"]["GameDetail"][];
             /** Format: int32 */
             player_id: number;
             player_name: string;
@@ -116,13 +174,13 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description 玩家统计 */
+            /** @description 玩家统计和比赛详情 */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PlayerStats"];
+                    "application/json": components["schemas"]["PlayerStatsWithGames"];
                 };
             };
             /** @description 玩家未找到 */
