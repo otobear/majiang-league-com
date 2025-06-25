@@ -11,7 +11,7 @@ tokio = { version = "1", features = ["full"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tracing-subscriber = "0.3.19"
-sqlx = { version = "0.8", features = ["postgres", "runtime-tokio-native-tls"] }
+sqlx = { version = "0.8", features = ["postgres", "runtime-tokio-rustls", "tls-rustls"] }
 utoipa = "5.3.1"
 utoipa-swagger-ui = { version = "9", features = ["axum"] }
 tower-http = { version = "0.6.6", features = ["cors"] }

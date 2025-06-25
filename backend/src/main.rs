@@ -45,14 +45,13 @@ async fn main() {
     tracing_subscriber::fmt::init();
 
     let database_url = std::env::var("DATABASE_URL")
-        .unwrap_or_else(|_| "postgres://postgres:password@localhost:5432/majiang".to_string());
+        .unwrap_or_else(|_| "postgres://postgres:password@localhost:5432/majiang?sslmode=require".to_string());
     let pool = PgPool::connect(&database_url)
         .await
         .expect("DB connect failed");
 
     let api_routes = Router::new()
         .route("/", get(root))
-        .route("/health", get(health))
         .route("/player_stats", get(get_player_stats_list))
         .route("/player_stats/:player_id", get(get_player_stats));
 
@@ -65,9 +64,10 @@ async fn main() {
         .allow_headers(Any);
 
     let app = Router::new()
+        .route("/health", get(health))
         .nest("/api/v1", api_routes)
         .with_state(pool)
-        .layer(cors); // 添加 CORS 中间件
+        .layer(cors);
 
     let openapi_json = ApiDoc::openapi().to_json().unwrap();
     std::fs::write("openapi.json", openapi_json).expect("Failed to write openapi.json");
