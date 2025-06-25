@@ -66,7 +66,7 @@ export interface components {
             /** Format: float */
             avg_gp?: number | null;
             /** Format: float */
-            avg_rp?: number | null;
+            avg_pp?: number | null;
             /** Format: float */
             avg_tp?: number | null;
             /** Format: int64 */
@@ -92,16 +92,16 @@ export interface components {
             third_place_ratio?: number | null;
             /** Format: int64 */
             total_gp?: number | null;
-            /** Format: int64 */
-            total_rp?: number | null;
-            /** Format: int64 */
+            /** Format: float */
+            total_pp?: number | null;
+            /** Format: float */
             total_tp?: number | null;
         };
         PlayerStatsWithGames: {
             /** Format: float */
             avg_gp?: number | null;
             /** Format: float */
-            avg_rp?: number | null;
+            avg_pp?: number | null;
             /** Format: float */
             avg_tp?: number | null;
             /** Format: int64 */
@@ -128,9 +128,9 @@ export interface components {
             third_place_ratio?: number | null;
             /** Format: int64 */
             total_gp?: number | null;
-            /** Format: int64 */
-            total_rp?: number | null;
-            /** Format: int64 */
+            /** Format: float */
+            total_pp?: number | null;
+            /** Format: float */
             total_tp?: number | null;
         };
     };

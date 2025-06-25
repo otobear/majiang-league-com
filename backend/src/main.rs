@@ -22,15 +22,15 @@ struct PlayerStats {
     player_name: String,
     game_count: Option<i64>,
     total_gp: Option<i64>,
-    total_tp: Option<i64>,
-    total_rp: Option<i64>,
+    total_tp: Option<f32>,
+    total_pp: Option<f32>,
     first_place_count: Option<i64>,
     second_place_count: Option<i64>,
     third_place_count: Option<i64>,
     fourth_place_count: Option<i64>,
     avg_gp: Option<f32>,
     avg_tp: Option<f32>,
-    avg_rp: Option<f32>,
+    avg_pp: Option<f32>,
     first_place_ratio: Option<f32>,
     second_place_ratio: Option<f32>,
     third_place_ratio: Option<f32>,
@@ -42,8 +42,8 @@ struct PlayerGameResult {
     player_id: i32,
     player_name: String,
     game_point: i32,
-    table_point: i32,
-    place_point: i32,
+    table_point: f32,
+    place_point: f32,
 }
 
 #[derive(Serialize, Deserialize, sqlx::FromRow, Debug)]
@@ -75,15 +75,15 @@ struct PlayerStatsWithGames {
     player_name: String,
     game_count: Option<i64>,
     total_gp: Option<i64>,
-    total_tp: Option<i64>,
-    total_rp: Option<i64>,
+    total_tp: Option<f32>,
+    total_pp: Option<f32>,
     first_place_count: Option<i64>,
     second_place_count: Option<i64>,
     third_place_count: Option<i64>,
     fourth_place_count: Option<i64>,
     avg_gp: Option<f32>,
     avg_tp: Option<f32>,
-    avg_rp: Option<f32>,
+    avg_pp: Option<f32>,
     first_place_ratio: Option<f32>,
     second_place_ratio: Option<f32>,
     third_place_ratio: Option<f32>,
@@ -195,13 +195,7 @@ async fn get_player_stats(
                 'player_name', p_all.name,
                 'game_point', gpr_all.game_point,
                 'table_point', gpr_all.table_point,
-                'place_point', CASE gpr_all.table_point
-                    WHEN 4 THEN 3
-                    WHEN 3 THEN 1
-                    WHEN 2 THEN -1
-                    WHEN 1 THEN -3
-                    ELSE 0
-                END
+                'place_point', (gpr_all.table_point * 2 - 5)
             ) ORDER BY gpr_all.id) as players
         FROM (
             SELECT DISTINCT g.id
@@ -248,14 +242,14 @@ async fn get_player_stats(
         game_count: stats.game_count,
         total_gp: stats.total_gp,
         total_tp: stats.total_tp,
-        total_rp: stats.total_rp,
+        total_pp: stats.total_pp,
         first_place_count: stats.first_place_count,
         second_place_count: stats.second_place_count,
         third_place_count: stats.third_place_count,
         fourth_place_count: stats.fourth_place_count,
         avg_gp: stats.avg_gp,
         avg_tp: stats.avg_tp,
-        avg_rp: stats.avg_rp,
+        avg_pp: stats.avg_pp,
         first_place_ratio: stats.first_place_ratio,
         second_place_ratio: stats.second_place_ratio,
         third_place_ratio: stats.third_place_ratio,
