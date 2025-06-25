@@ -1,4 +1,6 @@
 import { createApp } from 'vue'
+import { Chart, registerables } from 'chart.js'
+import pluginAnnotation from 'chartjs-plugin-annotation'
 import { createPinia } from 'pinia'
 import PrimeVue from 'primevue/config'
 import Aura from '@primeuix/themes/aura'
@@ -21,5 +23,7 @@ app.use(PrimeVue, {
     },
   },
 })
+
+Chart.register(...registerables, pluginAnnotation)
 
 app.mount('#app')
