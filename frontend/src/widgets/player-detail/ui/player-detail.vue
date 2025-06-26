@@ -24,7 +24,7 @@
             <template #icon>
               <i class="pi pi-chart-line text-2xl text-gray-600"></i>
             </template>
-            <template #label>平均着順</template>
+            <template #label>平均順位</template>
             <template #value>{{ (5 - playerData.tpAvg).toFixed(2) }}</template>
             <template #unit>位</template>
           </StatusCard>
@@ -118,7 +118,85 @@
       </div>
       <div class="flex-1 rounded-lg bg-white p-8 shadow">
         <p class="text-xl font-semibold">対戦相手別成績</p>
-        <!-- TODO -->
+        <DataTable
+          :value="opponentStats"
+          class="mt-4 text-end"
+          sort-field="totalPlacePointDiff"
+          :sort-order="-1"
+          :scrollable="true"
+          scrollHeight="400px"
+        >
+          <Column field="playerName" header="氏名">
+            <template #body="slotProps">
+              <router-link
+                :to="{ name: 'player', params: { id: slotProps.data.playerId } }"
+                class="text-green-600 underline hover:text-green-800"
+              >
+                {{ slotProps.data.playerName }}
+              </router-link>
+            </template>
+          </Column>
+          <Column field="gameCount" header="対戦数" sortable>
+            <template #body="slotProps">
+              <p class="flex items-baseline justify-end gap-1">
+                <span class="text-xl font-semibold text-gray-800">{{ slotProps.data.gameCount }}</span>
+                <span class="text-sm font-semibold text-gray-800">回</span>
+              </p>
+            </template>
+          </Column>
+          <Column field="totalPlacePointDiff" header="通算着順点差" sortable>
+            <template #body="slotProps">
+              <p class="flex items-baseline justify-end gap-1">
+                <span
+                  class="text-xl font-semibold"
+                  :class="{
+                    'text-red-600': slotProps.data.totalPlacePointDiff < 0,
+                    'text-green-600': slotProps.data.totalPlacePointDiff > 0,
+                    'text-gray-800': slotProps.data.totalPlacePointDiff === 0,
+                  }"
+                >
+                  {{ slotProps.data.totalPlacePointDiff > 0 ? '+' : ''
+                  }}{{ slotProps.data.totalPlacePointDiff.toFixed(2) }}
+                </span>
+                <span class="text-sm font-semibold text-gray-800">pt</span>
+              </p>
+            </template>
+          </Column>
+          <Column field="avgPlaceDiff" header="平均順位差" sortable>
+            <template #body="slotProps">
+              <p class="flex items-baseline justify-end gap-1">
+                <span
+                  class="text-xl font-semibold"
+                  :class="{
+                    'text-red-600': slotProps.data.avgPlaceDiff > 0,
+                    'text-green-600': slotProps.data.avgPlaceDiff < 0,
+                    'text-gray-800': slotProps.data.avgPlaceDiff === 0,
+                  }"
+                >
+                  {{ slotProps.data.avgPlaceDiff > 0 ? '+' : '' }}{{ slotProps.data.avgPlaceDiff.toFixed(2) }}
+                </span>
+                <span class="text-sm font-semibold text-gray-800">位</span>
+              </p>
+            </template>
+          </Column>
+          <Column field="avgGamePointDiff" header="平均素点差" sortable>
+            <template #body="slotProps">
+              <p class="flex items-baseline justify-end gap-1">
+                <span
+                  class="text-xl font-semibold"
+                  :class="{
+                    'text-red-600': slotProps.data.avgGamePointDiff < 0,
+                    'text-green-600': slotProps.data.avgGamePointDiff > 0,
+                    'text-gray-800': slotProps.data.avgGamePointDiff === 0,
+                  }"
+                >
+                  {{ slotProps.data.avgGamePointDiff > 0 ? '+' : '' }}{{ slotProps.data.avgGamePointDiff.toFixed(2) }}
+                </span>
+                <span class="text-sm font-semibold text-gray-800">pt</span>
+              </p>
+            </template>
+          </Column>
+        </DataTable>
       </div>
       <div class="flex-1 rounded-lg bg-white p-8 shadow">
         <p class="text-xl font-semibold">直近の対局結果</p>
@@ -290,6 +368,78 @@ const seatStats = computed(() => {
       avgGamePoint: data.count > 0 ? data.totalGamePoint / data.count : 0,
     }
   })
+})
+
+const opponentStats = computed(() => {
+  if (!playerData.value?.gameDetails) return []
+
+  const opponentData = new Map<
+    number,
+    {
+      playerId: number
+      playerName: string
+      gameCount: number
+      totalPlace: number
+      totalPlacePoint: number
+      totalGamePoint: number
+      totalOpponentPlace: number
+      totalOpponentGamePoint: number
+      totalOpponentPlacePoint: number
+    }
+  >()
+
+  playerData.value.gameDetails.forEach((game) => {
+    const currentPlayerResult = game.players.find((p) => p.playerId === playerData.value?.id)
+    if (!currentPlayerResult) return
+
+    game.players.forEach((opponent) => {
+      if (opponent.playerId === playerData.value?.id) return
+
+      if (!opponentData.has(opponent.playerId)) {
+        opponentData.set(opponent.playerId, {
+          playerId: opponent.playerId,
+          playerName: opponent.playerName,
+          gameCount: 0,
+          totalPlace: 0,
+          totalPlacePoint: 0,
+          totalGamePoint: 0,
+          totalOpponentPlace: 0,
+          totalOpponentGamePoint: 0,
+          totalOpponentPlacePoint: 0,
+        })
+      }
+
+      const data = opponentData.get(opponent.playerId)!
+      data.gameCount++
+      const place = 5 - currentPlayerResult.tablePoint
+      const opponentPlace = 5 - opponent.tablePoint
+      data.totalPlace += place
+      data.totalPlacePoint += currentPlayerResult.placePoint
+      data.totalGamePoint += currentPlayerResult.gamePoint
+      data.totalOpponentPlace += opponentPlace
+      data.totalOpponentGamePoint += opponent.gamePoint
+      data.totalOpponentPlacePoint += opponent.placePoint
+    })
+  })
+  return Array.from(opponentData.values())
+    .map((data) => {
+      const avgPlace = data.gameCount > 0 ? data.totalPlace / data.gameCount : 0
+      const avgOpponentPlace = data.gameCount > 0 ? data.totalOpponentPlace / data.gameCount : 0
+      const avgGamePoint = data.gameCount > 0 ? data.totalGamePoint / data.gameCount : 0
+      const avgOpponentGamePoint = data.gameCount > 0 ? data.totalOpponentGamePoint / data.gameCount : 0
+
+      return {
+        playerId: data.playerId,
+        playerName: data.playerName,
+        gameCount: data.gameCount,
+        totalPlacePointDiff: data.totalPlacePoint - data.totalOpponentPlacePoint,
+        avgPlace: avgPlace,
+        avgGamePoint: avgGamePoint,
+        avgPlaceDiff: avgPlace - avgOpponentPlace,
+        avgGamePointDiff: avgGamePoint - avgOpponentGamePoint,
+      }
+    })
+    .sort((a, b) => b.gameCount - a.gameCount)
 })
 
 const formatDate = (dateString: string) => {

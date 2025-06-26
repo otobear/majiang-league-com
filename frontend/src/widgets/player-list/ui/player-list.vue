@@ -29,7 +29,7 @@
         </template>
       </Column>
       <template v-if="aggregationType.value === 'total'">
-        <Column header="総合着順" field="rpTotal" sortable>
+        <Column header="通算着順" field="rpTotal" sortable>
           <template #body="slotProps">
             <span class="block text-right">{{ slotProps.data.rpTotal }}</span>
           </template>
@@ -61,7 +61,7 @@
         </Column>
       </template>
       <template v-else>
-        <Column header="平均着順" field="tpAvg" sortable>
+        <Column header="平均順位" field="tpAvg" sortable>
           <template #body="slotProps">
             <span class="block text-right">{{ (5 - slotProps.data.tpAvg).toFixed(2) }}</span>
           </template>
