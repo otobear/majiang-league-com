@@ -47,80 +47,78 @@
         </div>
       </div>
       <div class="flex gap-8">
-        <div class="flex flex-1 flex-col gap-8">
-          <div class="rounded-lg bg-white p-8 shadow">
-            <p class="text-xl font-semibold">順位分布</p>
-            <DataTable :value="placeStats" class="mt-4 text-end">
-              <Column field="placeName" header="順位" class="bg-gray-100">
-                <template #body="slotProps">
-                  <div class="text-center font-medium">
-                    {{ slotProps.data.placeName }}
-                  </div>
-                </template>
-              </Column>
-              <Column field="count" header="回数">
-                <template #body="slotProps">
-                  <p class="flex items-baseline justify-end gap-1">
-                    <span class="text-xl font-semibold text-gray-800">{{ slotProps.data.count }}</span>
-                    <span class="text-sm font-semibold text-gray-800">回</span>
-                  </p>
-                </template>
-              </Column>
-              <Column field="ratio" header="割合">
-                <template #body="slotProps">
-                  <p class="flex items-baseline justify-end gap-1">
-                    <span class="text-xl font-semibold text-gray-800">{{ slotProps.data.ratio.toFixed(2) }}</span>
-                    <span class="text-sm font-semibold text-gray-800">%</span>
-                  </p>
-                </template>
-              </Column>
-            </DataTable>
-          </div>
-          <div class="rounded-lg bg-white p-8 shadow">
-            <p class="text-xl font-semibold">座順別成績</p>
-            <DataTable :value="seatStats" class="mt-4 text-end">
-              <Column field="seatName" header="座順" class="bg-gray-100">
-                <template #body="slotProps">
-                  <div class="text-center font-medium">
-                    {{ slotProps.data.seatName }}
-                  </div>
-                </template>
-              </Column>
-              <Column field="count" header="回数">
-                <template #body="slotProps">
-                  <p class="flex items-baseline justify-end gap-1">
-                    <span class="text-xl font-semibold text-gray-800">{{ slotProps.data.count }}</span>
-                    <span class="text-sm font-semibold text-gray-800">回</span>
-                  </p>
-                </template>
-              </Column>
-              <Column field="avgPlace" header="平均順位">
-                <template #body="slotProps">
-                  <p class="flex items-baseline justify-end gap-1">
-                    <span class="text-xl font-semibold text-gray-800">
-                      {{ slotProps.data.count === 0 ? '-' : slotProps.data.avgPlace.toFixed(2) }}
-                    </span>
-                    <span v-if="slotProps.data.count > 0" class="text-sm font-semibold text-gray-800">位</span>
-                  </p>
-                </template>
-              </Column>
-              <Column field="avgGamePoint" header="平均素点">
-                <template #body="slotProps">
-                  <p class="flex items-baseline justify-end gap-1">
-                    <span class="text-xl font-semibold text-gray-800">
-                      {{ slotProps.data.count === 0 ? '-' : slotProps.data.avgGamePoint.toFixed(2) }}
-                    </span>
-                    <span v-if="slotProps.data.count > 0" class="text-sm font-semibold text-gray-800">pt</span>
-                  </p>
-                </template>
-              </Column>
-            </DataTable>
-          </div>
+        <div class="flex-1 rounded-lg bg-white p-8 shadow">
+          <p class="text-xl font-semibold">順位分布</p>
+          <DataTable :value="placeStats" class="mt-4 text-end">
+            <Column field="placeName" header="順位" class="bg-gray-100">
+              <template #body="slotProps">
+                <div class="text-center font-medium">
+                  {{ slotProps.data.placeName }}
+                </div>
+              </template>
+            </Column>
+            <Column field="count" header="回数">
+              <template #body="slotProps">
+                <p class="flex items-baseline justify-end gap-1">
+                  <span class="text-xl font-semibold text-gray-800">{{ slotProps.data.count }}</span>
+                  <span class="text-sm font-semibold text-gray-800">回</span>
+                </p>
+              </template>
+            </Column>
+            <Column field="ratio" header="割合">
+              <template #body="slotProps">
+                <p class="flex items-baseline justify-end gap-1">
+                  <span class="text-xl font-semibold text-gray-800">{{ slotProps.data.ratio.toFixed(2) }}</span>
+                  <span class="text-sm font-semibold text-gray-800">%</span>
+                </p>
+              </template>
+            </Column>
+          </DataTable>
         </div>
         <div class="flex-1 rounded-lg bg-white p-8 shadow">
-          <p class="text-xl font-semibold">対戦相手別成績</p>
-          <!-- TODO -->
+          <p class="text-xl font-semibold">座順別成績</p>
+          <DataTable :value="seatStats" class="mt-4 text-end">
+            <Column field="seatName" header="座順" class="bg-gray-100">
+              <template #body="slotProps">
+                <div class="text-center font-medium">
+                  {{ slotProps.data.seatName }}
+                </div>
+              </template>
+            </Column>
+            <Column field="count" header="回数">
+              <template #body="slotProps">
+                <p class="flex items-baseline justify-end gap-1">
+                  <span class="text-xl font-semibold text-gray-800">{{ slotProps.data.count }}</span>
+                  <span class="text-sm font-semibold text-gray-800">回</span>
+                </p>
+              </template>
+            </Column>
+            <Column field="avgPlace" header="平均順位">
+              <template #body="slotProps">
+                <p class="flex items-baseline justify-end gap-1">
+                  <span class="text-xl font-semibold text-gray-800">
+                    {{ slotProps.data.count === 0 ? '-' : slotProps.data.avgPlace.toFixed(2) }}
+                  </span>
+                  <span v-if="slotProps.data.count > 0" class="text-sm font-semibold text-gray-800">位</span>
+                </p>
+              </template>
+            </Column>
+            <Column field="avgGamePoint" header="平均素点">
+              <template #body="slotProps">
+                <p class="flex items-baseline justify-end gap-1">
+                  <span class="text-xl font-semibold text-gray-800">
+                    {{ slotProps.data.count === 0 ? '-' : slotProps.data.avgGamePoint.toFixed(2) }}
+                  </span>
+                  <span v-if="slotProps.data.count > 0" class="text-sm font-semibold text-gray-800">pt</span>
+                </p>
+              </template>
+            </Column>
+          </DataTable>
         </div>
+      </div>
+      <div class="flex-1 rounded-lg bg-white p-8 shadow">
+        <p class="text-xl font-semibold">対戦相手別成績</p>
+        <!-- TODO -->
       </div>
       <div class="flex-1 rounded-lg bg-white p-8 shadow">
         <p class="text-xl font-semibold">直近の対局結果</p>
