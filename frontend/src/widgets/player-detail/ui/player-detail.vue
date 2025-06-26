@@ -49,10 +49,16 @@
       <div class="flex gap-8">
         <div class="flex flex-1 flex-col gap-8">
           <div class="rounded-lg bg-white p-8 shadow">
-            <p class="text-xl font-semibold">着順分布</p>
-            <DataTable :value="placeDistribution" class="text-end">
-              <Column field="label" class="bg-gray-100" />
-              <Column field="count">
+            <p class="text-xl font-semibold">順位分布</p>
+            <DataTable :value="placeStats" class="mt-4 text-end">
+              <Column field="placeName" header="順位" class="bg-gray-100">
+                <template #body="slotProps">
+                  <div class="text-center font-medium">
+                    {{ slotProps.data.placeName }}
+                  </div>
+                </template>
+              </Column>
+              <Column field="count" header="回数">
                 <template #body="slotProps">
                   <p class="flex items-baseline justify-end gap-1">
                     <span class="text-xl font-semibold text-gray-800">{{ slotProps.data.count }}</span>
@@ -60,7 +66,7 @@
                   </p>
                 </template>
               </Column>
-              <Column field="ratio">
+              <Column field="ratio" header="割合">
                 <template #body="slotProps">
                   <p class="flex items-baseline justify-end gap-1">
                     <span class="text-xl font-semibold text-gray-800">{{ slotProps.data.ratio.toFixed(2) }}</span>
@@ -72,7 +78,43 @@
           </div>
           <div class="rounded-lg bg-white p-8 shadow">
             <p class="text-xl font-semibold">座順別成績</p>
-            <!-- TODO -->
+            <DataTable :value="seatStats" class="mt-4 text-end">
+              <Column field="seatName" header="座順" class="bg-gray-100">
+                <template #body="slotProps">
+                  <div class="text-center font-medium">
+                    {{ slotProps.data.seatName }}
+                  </div>
+                </template>
+              </Column>
+              <Column field="count" header="回数">
+                <template #body="slotProps">
+                  <p class="flex items-baseline justify-end gap-1">
+                    <span class="text-xl font-semibold text-gray-800">{{ slotProps.data.count }}</span>
+                    <span class="text-sm font-semibold text-gray-800">回</span>
+                  </p>
+                </template>
+              </Column>
+              <Column field="avgPlace" header="平均順位">
+                <template #body="slotProps">
+                  <p class="flex items-baseline justify-end gap-1">
+                    <span class="text-xl font-semibold text-gray-800">
+                      {{ slotProps.data.count === 0 ? '-' : slotProps.data.avgPlace.toFixed(2) }}
+                    </span>
+                    <span v-if="slotProps.data.count > 0" class="text-sm font-semibold text-gray-800">位</span>
+                  </p>
+                </template>
+              </Column>
+              <Column field="avgGamePoint" header="平均素点">
+                <template #body="slotProps">
+                  <p class="flex items-baseline justify-end gap-1">
+                    <span class="text-xl font-semibold text-gray-800">
+                      {{ slotProps.data.count === 0 ? '-' : slotProps.data.avgGamePoint.toFixed(2) }}
+                    </span>
+                    <span v-if="slotProps.data.count > 0" class="text-sm font-semibold text-gray-800">pt</span>
+                  </p>
+                </template>
+              </Column>
+            </DataTable>
           </div>
         </div>
         <div class="flex-1 rounded-lg bg-white p-8 shadow">
@@ -153,11 +195,27 @@ import StatusCard from './player-detail-main-status-card.vue'
 
 const route = useRoute()
 const playerData = ref<IPlayerWithGames | null>()
-const placeDistribution = computed(() => [
-  { label: '1位', count: playerData.value?.firstPlaceCount || 0, ratio: playerData.value?.firstPlacePercentage || 0 },
-  { label: '2位', count: playerData.value?.secondPlaceCount || 0, ratio: playerData.value?.secondPlacePercentage || 0 },
-  { label: '3位', count: playerData.value?.thirdPlaceCount || 0, ratio: playerData.value?.thirdPlacePercentage || 0 },
-  { label: '4位', count: playerData.value?.fourthPlaceCount || 0, ratio: playerData.value?.fourthPlacePercentage || 0 },
+const placeStats = computed(() => [
+  {
+    placeName: '1位',
+    count: playerData.value?.firstPlaceCount || 0,
+    ratio: playerData.value?.firstPlacePercentage || 0,
+  },
+  {
+    placeName: '2位',
+    count: playerData.value?.secondPlaceCount || 0,
+    ratio: playerData.value?.secondPlacePercentage || 0,
+  },
+  {
+    placeName: '3位',
+    count: playerData.value?.thirdPlaceCount || 0,
+    ratio: playerData.value?.thirdPlacePercentage || 0,
+  },
+  {
+    placeName: '4位',
+    count: playerData.value?.fourthPlaceCount || 0,
+    ratio: playerData.value?.fourthPlacePercentage || 0,
+  },
 ])
 
 const gameHistory = computed(() => {
@@ -196,6 +254,44 @@ const gameHistoryPairs = computed(() => {
   }
 
   return pairs
+})
+
+const seatStats = computed(() => {
+  if (!playerData.value?.gameDetails) return []
+
+  const seatNames = ['東', '南', '西', '北']
+  const seatData = {
+    東: { count: 0, totalPlace: 0, totalGamePoint: 0 },
+    南: { count: 0, totalPlace: 0, totalGamePoint: 0 },
+    西: { count: 0, totalPlace: 0, totalGamePoint: 0 },
+    北: { count: 0, totalPlace: 0, totalGamePoint: 0 },
+  }
+
+  playerData.value.gameDetails.forEach((game) => {
+    const sortedPlayers = [...game.players].sort((a, b) => a.playerId - b.playerId)
+
+    const playerIndex = sortedPlayers.findIndex((p) => p.playerId === playerData.value?.id)
+
+    if (playerIndex !== -1) {
+      const seatName = seatNames[playerIndex] as keyof typeof seatData
+      const playerResult = sortedPlayers[playerIndex]
+
+      seatData[seatName].count++
+      const place = 5 - playerResult.tablePoint
+      seatData[seatName].totalPlace += place
+      seatData[seatName].totalGamePoint += playerResult.gamePoint
+    }
+  })
+
+  return seatNames.map((seatName) => {
+    const data = seatData[seatName as keyof typeof seatData]
+    return {
+      seatName,
+      count: data.count,
+      avgPlace: data.count > 0 ? data.totalPlace / data.count : 0,
+      avgGamePoint: data.count > 0 ? data.totalGamePoint / data.count : 0,
+    }
+  })
 })
 
 const formatDate = (dateString: string) => {
