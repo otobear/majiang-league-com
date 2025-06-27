@@ -49,6 +49,7 @@ struct PlayerGameResult {
 #[derive(Serialize, Deserialize, sqlx::FromRow, Debug)]
 struct GameDetailRaw {
     game_id: i32,
+    tournament_id: i32,
     tournament_name: String,
     tournament_sub_name: String,
     tournament_date: NaiveDate,
@@ -60,6 +61,7 @@ struct GameDetailRaw {
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 struct GameDetail {
     game_id: i32,
+    tournament_id: i32,
     tournament_name: String,
     tournament_sub_name: String,
     #[schema(value_type = String, format = Date)]
@@ -185,6 +187,7 @@ async fn get_player_stats(
         r#"
         SELECT 
             g.id as game_id,
+            t.id as tournament_id,
             t.name as tournament_name,
             t.sub_name as tournament_sub_name,
             t.date as tournament_date,
@@ -208,7 +211,7 @@ async fn get_player_stats(
         JOIN tournaments t ON s.tournament_id = t.id
         JOIN game_player_results gpr_all ON gpr_all.game_id = g.id
         JOIN players p_all ON gpr_all.player_id = p_all.id
-        GROUP BY g.id, t.name, t.sub_name, t.date, t.location, s.name
+        GROUP BY g.id, t.id, t.name, t.sub_name, t.date, t.location, s.name
         ORDER BY g.id ASC
         "#
     )
@@ -223,8 +226,9 @@ async fn get_player_stats(
         .map(|raw| -> Result<GameDetail, axum::http::StatusCode> {
             let players: Vec<PlayerGameResult> = serde_json::from_value(raw.players)
                 .map_err(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR)?;
-            Ok(GameDetail {
+Ok(GameDetail {
                 game_id: raw.game_id,
+                tournament_id: raw.tournament_id,
                 tournament_name: raw.tournament_name,
                 tournament_sub_name: raw.tournament_sub_name,
                 tournament_date: raw.tournament_date,

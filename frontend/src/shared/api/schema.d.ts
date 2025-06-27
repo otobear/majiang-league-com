@@ -47,6 +47,8 @@ export interface components {
             session_name: string;
             /** Format: date */
             tournament_date: string;
+            /** Format: int32 */
+            tournament_id: number;
             tournament_location: string;
             tournament_name: string;
             tournament_sub_name: string;
@@ -54,12 +56,12 @@ export interface components {
         PlayerGameResult: {
             /** Format: int32 */
             game_point: number;
-            /** Format: int32 */
+            /** Format: float */
             place_point: number;
             /** Format: int32 */
             player_id: number;
             player_name: string;
-            /** Format: int32 */
+            /** Format: float */
             table_point: number;
         };
         PlayerStats: {

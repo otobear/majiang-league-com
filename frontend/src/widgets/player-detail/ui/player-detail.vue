@@ -81,8 +81,61 @@
         </div>
       </div>
       <div class="flex-1 rounded-lg bg-white p-8 shadow">
-        <p class="text-xl font-semibold">対局結果</p>
-        <!-- TODO -->
+        <p class="text-xl font-semibold">直近の対局結果</p>
+        <DataTable
+          :value="gameHistoryPairs"
+          show-gridlines
+          paginator
+          :rows="10"
+          :rowsPerPageOptions="[10, 20, 50]"
+          class="mt-4"
+          tableStyle="min-width: 50rem"
+        >
+          <Column>
+            <template #header>
+              <div class="flex w-full justify-between">
+                <div>対局日</div>
+                <div>素点 / 順位点</div>
+                <div>詳細</div>
+              </div>
+            </template>
+            <template #body="slotProps">
+              <router-link
+                v-if="slotProps.data.game1"
+                :to="{ name: 'tournament', params: { id: slotProps.data.game1.tournamentId } }"
+                class="flex justify-between"
+              >
+                <div class="text-sm text-gray-600">{{ formatDate(slotProps.data.game1.tournamentDate) }}</div>
+                <div class="text-right font-medium">
+                  {{ slotProps.data.game1.gamePoint }} / {{ slotProps.data.game1.tablePoint }}
+                </div>
+                <i class="material-symbols-outlined text-sm text-green-600">arrow_forward</i>
+              </router-link>
+            </template>
+          </Column>
+          <Column>
+            <template #header>
+              <div class="flex w-full justify-between">
+                <div>対局日</div>
+                <div>素点 / 順位点</div>
+                <div>詳細</div>
+              </div>
+            </template>
+            <template #body="slotProps">
+              <router-link
+                v-if="slotProps.data.game2"
+                :to="{ name: 'tournament', params: { id: slotProps.data.game2.tournamentId } }"
+                class="flex justify-between"
+              >
+                <div class="text-sm text-gray-600">{{ formatDate(slotProps.data.game2.tournamentDate) }}</div>
+                <div class="text-right font-medium">
+                  {{ slotProps.data.game2.gamePoint }} / {{ slotProps.data.game2.tablePoint }}
+                </div>
+                <i class="material-symbols-outlined text-sm text-green-600">arrow_forward</i>
+              </router-link>
+            </template>
+          </Column>
+        </DataTable>
       </div>
     </template>
     <LoadingSpinner v-else />
@@ -94,18 +147,65 @@ import { onMounted, ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { Column, DataTable } from 'primevue'
 import { fetchPlayerStatsById } from '@/entities/player'
-import type { IPlayer } from '@/entities/player'
+import type { IPlayerWithGames } from '@/entities/player'
 import { LoadingSpinner } from '@/shared/ui/loading-spinner'
 import StatusCard from './player-detail-main-status-card.vue'
 
 const route = useRoute()
-const playerData = ref<IPlayer | null>()
+const playerData = ref<IPlayerWithGames | null>()
 const placeDistribution = computed(() => [
   { label: '1位', count: playerData.value?.firstPlaceCount || 0, ratio: playerData.value?.firstPlacePercentage || 0 },
   { label: '2位', count: playerData.value?.secondPlaceCount || 0, ratio: playerData.value?.secondPlacePercentage || 0 },
   { label: '3位', count: playerData.value?.thirdPlaceCount || 0, ratio: playerData.value?.thirdPlacePercentage || 0 },
   { label: '4位', count: playerData.value?.fourthPlaceCount || 0, ratio: playerData.value?.fourthPlacePercentage || 0 },
 ])
+
+const gameHistory = computed(() => {
+  if (!playerData.value?.gameDetails) return []
+
+  return playerData.value.gameDetails
+    .map((game) => {
+      const playerResult = game.players.find((p) => p.playerId === playerData.value?.id)
+      if (!playerResult) return null
+
+      return {
+        ...game,
+        gamePoint: playerResult.gamePoint,
+        placePoint: playerResult.placePoint,
+        tablePoint: playerResult.tablePoint,
+      }
+    })
+    .filter(Boolean)
+    .sort((a, b) => {
+      if (!a && !b) return 0
+      if (!a) return 1
+      if (!b) return -1
+      return b.gameId - a.gameId
+    })
+})
+
+const gameHistoryPairs = computed(() => {
+  const games = gameHistory.value
+  const pairs = []
+
+  for (let i = 0; i < games.length; i += 2) {
+    pairs.push({
+      game1: games[i] || null,
+      game2: games[i + 1] || null,
+    })
+  }
+
+  return pairs
+})
+
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString)
+  return date.toLocaleDateString('ja-JP', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  })
+}
 
 onMounted(async () => {
   playerData.value = await fetchPlayerStatsById(route.params.id as unknown as number)
