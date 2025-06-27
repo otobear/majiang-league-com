@@ -36,6 +36,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/tournaments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_tournaments"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/tournaments/{tournament_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_tournament"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -52,6 +84,13 @@ export interface components {
             tournament_location: string;
             tournament_name: string;
             tournament_sub_name: string;
+        };
+        GameInfo: {
+            /** Format: int32 */
+            forfeit_game_point: number;
+            /** Format: int32 */
+            id: number;
+            player_results: components["schemas"]["PlayerGameResult"][];
         };
         PlayerGameResult: {
             /** Format: int32 */
@@ -136,6 +175,52 @@ export interface components {
         } & {
             game_details: components["schemas"]["GameDetail"][];
         };
+        RoundPoint: {
+            /** Format: int32 */
+            game_point: number;
+            /** Format: float */
+            table_point: number;
+        };
+        SessionDetail: {
+            games: components["schemas"]["GameInfo"][];
+            info: components["schemas"]["SessionInfo"];
+        };
+        SessionInfo: {
+            /** Format: int32 */
+            id: number;
+            name: string;
+        };
+        TotalPoint: {
+            /** Format: int32 */
+            game_point: number;
+            /** Format: float */
+            table_point: number;
+        };
+        Tournament: {
+            /** Format: date */
+            date: string;
+            /** Format: int32 */
+            id: number;
+            location: string;
+            name: string;
+            sub_name: string;
+        };
+        TournamentDetail: {
+            /** Format: int32 */
+            id: number;
+            info: components["schemas"]["Tournament"];
+            sessions: components["schemas"]["SessionDetail"][];
+            summary: components["schemas"]["TournamentSummary"][];
+        };
+        TournamentSummary: {
+            /** Format: int32 */
+            player_id: number;
+            player_name: string;
+            round_point: components["schemas"]["RoundPoint"][];
+            total_point: components["schemas"]["TotalPoint"];
+            /** Format: int32 */
+            tournament_place: number;
+        };
     };
     responses: never;
     parameters: never;
@@ -187,6 +272,56 @@ export interface operations {
                 };
             };
             /** @description 玩家未找到 */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    get_tournaments: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Tournament list with details */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TournamentDetail"][];
+                };
+            };
+        };
+    };
+    get_tournament: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Tournament ID */
+                tournament_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Tournament detail */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TournamentDetail"];
+                };
+            };
+            /** @description Tournament not found */
             404: {
                 headers: {
                     [name: string]: unknown;

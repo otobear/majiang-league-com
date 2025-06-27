@@ -1,511 +1,123 @@
 import type { ITournament } from '../model'
+import { baseApi } from '@/shared/api'
 
-const mockTournamentData = [
-  {
-    id: '2',
+type TournamentApiResponse = {
+  id: number
+  name: string
+  sub_name: string
+  date: string
+  location: string
+}
+
+type TournamentDetailApiResponse = {
+  id: number
+  info: {
+    id: number
+    name: string
+    sub_name: string
+    date: string
+    location: string
+  }
+  summary: {
+    player_id: number
+    player_name: string
+    tournament_place: number
+    total_point: {
+      table_point: number
+      game_point: number
+    }
+    round_point: {
+      table_point: number
+      game_point: number
+    }[]
+  }[]
+  sessions: {
     info: {
-      name: '第2回',
-      subName: 'プレ赤塚リーグ（仮）',
-      date: '2021-04-25',
-      location: 'ガラパゴス高田馬場店',
-    },
-    summary: [
-      {
-        playerId: '5',
-        playerName: '柏木拓',
-        tournamentPlace: 1,
-        totalPoint: {
-          tablePoint: 14,
-          gamePoint: 175,
-        },
-        roundPoint: [
-          { tablePoint: 3, gamePoint: -51 },
-          { tablePoint: 4, gamePoint: 121 },
-          { tablePoint: 3, gamePoint: 25 },
-          { tablePoint: 4, gamePoint: 80 },
-        ],
-      },
-      {
-        playerId: '3',
-        playerName: '遠藤俊晃',
-        tournamentPlace: 2,
-        totalPoint: {
-          tablePoint: 12,
-          gamePoint: 8,
-        },
-        roundPoint: [
-          { tablePoint: 1, gamePoint: -185 },
-          { tablePoint: 4, gamePoint: 74 },
-          { tablePoint: 4, gamePoint: 81 },
-          { tablePoint: 3, gamePoint: 38 },
-        ],
-      },
-      {
-        playerId: '10',
-        playerName: '手塚ゆり',
-        tournamentPlace: 3,
-        totalPoint: {
-          tablePoint: 11.5,
-          gamePoint: 188,
-        },
-        roundPoint: [
-          { tablePoint: 1.5, gamePoint: -55 },
-          { tablePoint: 2, gamePoint: -49 },
-          { tablePoint: 4, gamePoint: 154 },
-          { tablePoint: 4, gamePoint: 138 },
-        ],
-      },
-      {
-        playerId: '7',
-        playerName: '小林英夫',
-        tournamentPlace: 4,
-        totalPoint: {
-          tablePoint: 11,
-          gamePoint: 93,
-        },
-        roundPoint: [
-          { tablePoint: 4, gamePoint: 160 },
-          { tablePoint: 2, gamePoint: -59 },
-          { tablePoint: 3, gamePoint: 1 },
-          { tablePoint: 2, gamePoint: -9 },
-        ],
-      },
-      {
-        playerId: '11',
-        playerName: '田籠謙介',
-        tournamentPlace: 5,
-        totalPoint: {
-          tablePoint: 9,
-          gamePoint: 33,
-        },
-        roundPoint: [
-          { tablePoint: 3, gamePoint: 63 },
-          { tablePoint: 3, gamePoint: 85 },
-          { tablePoint: 2, gamePoint: -6 },
-          { tablePoint: 1, gamePoint: -109 },
-        ],
-      },
-      {
-        playerId: '12',
-        playerName: '柴崎健司',
-        tournamentPlace: 6,
-        totalPoint: {
-          tablePoint: 8,
-          gamePoint: -81,
-        },
-        roundPoint: [
-          { tablePoint: 2, gamePoint: -38 },
-          { tablePoint: 1, gamePoint: -77 },
-          { tablePoint: 2, gamePoint: -7 },
-          { tablePoint: 3, gamePoint: 41 },
-        ],
-      },
-      {
-        playerId: '6',
-        playerName: '二萬章吾',
-        tournamentPlace: 7,
-        totalPoint: {
-          tablePoint: 8,
-          gamePoint: -176,
-        },
-        roundPoint: [
-          { tablePoint: 4, gamePoint: 161 },
-          { tablePoint: 1, gamePoint: -147 },
-          { tablePoint: 1, gamePoint: -148 },
-          { tablePoint: 2, gamePoint: -42 },
-        ],
-      },
-      {
-        playerId: '2',
-        playerName: '赤塚修',
-        tournamentPlace: 8,
-        totalPoint: {
-          tablePoint: 6.5,
-          gamePoint: -240,
-        },
-        roundPoint: [
-          { tablePoint: 1.5, gamePoint: -55 },
-          { tablePoint: 3, gamePoint: 52 },
-          { tablePoint: 1, gamePoint: -100 },
-          { tablePoint: 1, gamePoint: -137 },
-        ],
-      },
-    ],
-    sessions: [
-      {
-        info: {
-          id: '1',
-          name: '1回戦',
-        },
-        games: [
-          {
-            id: '1',
-            forfeit: 0,
-            playerResults: [
-              { playerId: '11', playerName: '田籠謙介', tablePoint: 3, gamePoint: 63 },
-              { playerId: '7', playerName: '小林英夫', tablePoint: 4, gamePoint: 160 },
-              { playerId: '12', playerName: '柴崎健司', tablePoint: 2, gamePoint: -38 },
-              { playerId: '3', playerName: '遠藤俊晃', tablePoint: 1, gamePoint: -185 },
-            ],
-          },
-          {
-            id: '2',
-            forfeit: 0,
-            playerResults: [
-              { playerId: '6', playerName: '二萬章吾', tablePoint: 4, gamePoint: 161 },
-              { playerId: '10', playerName: '手塚ゆり', tablePoint: 1.5, gamePoint: -55 },
-              { playerId: '5', playerName: '柏木拓', tablePoint: 3, gamePoint: -51 },
-              { playerId: '2', playerName: '赤塚修', tablePoint: 1.5, gamePoint: -55 },
-            ],
-          },
-        ],
-      },
-      {
-        info: {
-          id: '2',
-          name: '2回戦',
-        },
-        games: [
-          {
-            id: '3',
-            forfeit: 0,
-            playerResults: [
-              { playerId: '5', playerName: '柏木拓', tablePoint: 4, gamePoint: 121 },
-              { playerId: '6', playerName: '二萬章吾', tablePoint: 1, gamePoint: -147 },
-              { playerId: '11', playerName: '田籠謙介', tablePoint: 3, gamePoint: 85 },
-              { playerId: '7', playerName: '小林英夫', tablePoint: 2, gamePoint: -59 },
-            ],
-          },
-          {
-            id: '4',
-            forfeit: 0,
-            playerResults: [
-              { playerId: '2', playerName: '赤塚修', tablePoint: 3, gamePoint: 52 },
-              { playerId: '12', playerName: '柴崎健司', tablePoint: 1, gamePoint: -77 },
-              { playerId: '10', playerName: '手塚ゆり', tablePoint: 2, gamePoint: -49 },
-              { playerId: '3', playerName: '遠藤俊晃', tablePoint: 4, gamePoint: 74 },
-            ],
-          },
-        ],
-      },
-      {
-        info: {
-          id: '3',
-          name: '3回戦',
-        },
-        games: [
-          {
-            id: '5',
-            forfeit: 0,
-            playerResults: [
-              { playerId: '2', playerName: '赤塚修', tablePoint: 1, gamePoint: -100 },
-              { playerId: '3', playerName: '遠藤俊晃', tablePoint: 4, gamePoint: 81 },
-              { playerId: '5', playerName: '柏木拓', tablePoint: 3, gamePoint: 25 },
-              { playerId: '11', playerName: '田籠謙介', tablePoint: 2, gamePoint: -6 },
-            ],
-          },
-          {
-            id: '6',
-            forfeit: 0,
-            playerResults: [
-              { playerId: '12', playerName: '柴崎健司', tablePoint: 2, gamePoint: -7 },
-              { playerId: '7', playerName: '小林英夫', tablePoint: 3, gamePoint: 1 },
-              { playerId: '10', playerName: '手塚ゆり', tablePoint: 4, gamePoint: 154 },
-              { playerId: '6', playerName: '二萬章吾', tablePoint: 1, gamePoint: -148 },
-            ],
-          },
-        ],
-      },
-      {
-        info: {
-          id: '4',
-          name: '4回戦',
-        },
-        games: [
-          {
-            id: '7',
-            forfeit: 0,
-            playerResults: [
-              { playerId: '7', playerName: '小林英夫', tablePoint: 2, gamePoint: -9 },
-              { playerId: '3', playerName: '遠藤俊晃', tablePoint: 3, gamePoint: 38 },
-              { playerId: '11', playerName: '田籠謙介', tablePoint: 1, gamePoint: -109 },
-              { playerId: '5', playerName: '柏木拓', tablePoint: 4, gamePoint: 80 },
-            ],
-          },
-          {
-            id: '8',
-            forfeit: 0,
-            playerResults: [
-              { playerId: '6', playerName: '二萬章吾', tablePoint: 2, gamePoint: -42 },
-              { playerId: '10', playerName: '手塚ゆり', tablePoint: 4, gamePoint: 138 },
-              { playerId: '12', playerName: '柴崎健司', tablePoint: 3, gamePoint: 41 },
-              { playerId: '2', playerName: '赤塚修', tablePoint: 1, gamePoint: -137 },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: '1',
+      id: number
+      name: string
+    }
+    games: {
+      id: number
+      forfeit_game_point: number
+      player_results: {
+        player_id: number
+        player_name: string
+        table_point: number
+        game_point: number
+      }[]
+    }[]
+  }[]
+}
+
+function transformTournamentList(apiTournaments: TournamentDetailApiResponse[]): ITournament[] {
+  return apiTournaments.map((tournament) => transformTournamentDetail(tournament))
+}
+
+function transformTournamentDetail(apiTournament: TournamentDetailApiResponse): ITournament {
+  return {
+    id: apiTournament.id.toString(),
     info: {
-      name: '第1回',
-      subName: 'プレ赤塚リーグ（仮）',
-      date: '2021-03-28',
-      location: 'ガラパゴス高田馬場店',
+      name: apiTournament.info.name,
+      subName: apiTournament.info.sub_name,
+      date: apiTournament.info.date,
+      location: apiTournament.info.location,
     },
-    summary: [
-      {
-        playerId: '1',
-        playerName: '土屋政士',
-        tournamentPlace: 1,
-        totalPoint: {
-          tablePoint: 13,
-          gamePoint: 462,
-        },
-        roundPoint: [
-          { tablePoint: 4, gamePoint: 245 },
-          { tablePoint: 4, gamePoint: 134 },
-          { tablePoint: 4, gamePoint: 284 },
-          { tablePoint: 1, gamePoint: -201 },
-        ],
+    summary: apiTournament.summary.map((summary) => ({
+      playerId: summary.player_id.toString(),
+      playerName: summary.player_name,
+      tournamentPlace: summary.tournament_place,
+      totalPoint: {
+        tablePoint: summary.total_point.table_point,
+        gamePoint: summary.total_point.game_point,
       },
-      {
-        playerId: '2',
-        playerName: '赤塚修',
-        tournamentPlace: 2,
-        totalPoint: {
-          tablePoint: 12,
-          gamePoint: 54,
-        },
-        roundPoint: [
-          { tablePoint: 2, gamePoint: -90 },
-          { tablePoint: 4, gamePoint: 120 },
-          { tablePoint: 2, gamePoint: -97 },
-          { tablePoint: 4, gamePoint: 121 },
-        ],
+      roundPoint: summary.round_point.map((round) => ({
+        tablePoint: round.table_point,
+        gamePoint: round.game_point,
+      })),
+    })),
+    sessions: apiTournament.sessions.map((session) => ({
+      info: {
+        id: session.info.id.toString(),
+        name: session.info.name,
       },
-      {
-        playerId: '3',
-        playerName: '遠藤俊晃',
-        tournamentPlace: 3,
-        totalPoint: {
-          tablePoint: 11,
-          gamePoint: 145,
-        },
-        roundPoint: [
-          { tablePoint: 3, gamePoint: 122 },
-          { tablePoint: 2, gamePoint: -65 },
-          { tablePoint: 3, gamePoint: -7 },
-          { tablePoint: 3, gamePoint: 95 },
-        ],
-      },
-      {
-        playerId: '4',
-        playerName: '左永',
-        tournamentPlace: 4,
-        totalPoint: {
-          tablePoint: 10,
-          gamePoint: 48,
-        },
-        roundPoint: [
-          { tablePoint: 4, gamePoint: 125 },
-          { tablePoint: 3, gamePoint: 118 },
-          { tablePoint: 1, gamePoint: -180 },
-          { tablePoint: 2, gamePoint: -15 },
-        ],
-      },
-      {
-        playerId: '5',
-        playerName: '柏木拓',
-        tournamentPlace: 5,
-        totalPoint: {
-          tablePoint: 10,
-          gamePoint: 25,
-        },
-        roundPoint: [
-          { tablePoint: 3, gamePoint: -19 },
-          { tablePoint: 1, gamePoint: -187 },
-          { tablePoint: 2, gamePoint: -7 },
-          { tablePoint: 4, gamePoint: 238 },
-        ],
-      },
-      {
-        playerId: '6',
-        playerName: '二萬章吾',
-        tournamentPlace: 6,
-        totalPoint: {
-          tablePoint: 9,
-          gamePoint: -89,
-        },
-        roundPoint: [
-          { tablePoint: 1, gamePoint: -157 },
-          { tablePoint: 2, gamePoint: -57 },
-          { tablePoint: 3, gamePoint: 57 },
-          { tablePoint: 3, gamePoint: 68 },
-        ],
-      },
-      {
-        playerId: '7',
-        playerName: '小林英夫',
-        tournamentPlace: 7,
-        totalPoint: {
-          tablePoint: 8,
-          gamePoint: -262,
-        },
-        roundPoint: [
-          { tablePoint: 2, gamePoint: -104 },
-          { tablePoint: 1, gamePoint: -58 },
-          { tablePoint: 4, gamePoint: 109 },
-          { tablePoint: 1, gamePoint: -209 },
-        ],
-      },
-      {
-        playerId: '8',
-        playerName: '石橋大助',
-        tournamentPlace: 8,
-        totalPoint: {
-          tablePoint: 6,
-          gamePoint: -383,
-        },
-        roundPoint: [
-          { tablePoint: 1, gamePoint: -122 },
-          { tablePoint: 3, gamePoint: -5 },
-          { tablePoint: 1, gamePoint: -159 },
-          { tablePoint: 2, gamePoint: -97 },
-        ],
-      },
-    ],
-    sessions: [
-      {
-        info: {
-          id: '1',
-          name: '1回戦',
-        },
-        games: [
-          {
-            id: '1',
-            forfeitGamePoint: 0,
-            playerResults: [
-              { playerId: '1', playerName: '土屋政士', tablePoint: 4, gamePoint: 245 },
-              { playerId: '2', playerName: '柏木拓', tablePoint: 3, gamePoint: -19 },
-              { playerId: '3', playerName: '小林英夫', tablePoint: 2, gamePoint: -104 },
-              { playerId: '4', playerName: '石橋大助', tablePoint: 1, gamePoint: -122 },
-            ],
-          },
-          {
-            id: '2',
-            forfeitGamePoint: 0,
-            playerResults: [
-              { playerId: '5', playerName: '赤塚修', tablePoint: 2, gamePoint: -90 },
-              { playerId: '6', playerName: '遠藤俊晃', tablePoint: 3, gamePoint: 122 },
-              { playerId: '7', playerName: '左永', tablePoint: 4, gamePoint: 125 },
-              { playerId: '8', playerName: '二萬章吾', tablePoint: 1, gamePoint: -157 },
-            ],
-          },
-        ],
-      },
-      {
-        info: {
-          id: '2',
-          name: '2回戦',
-        },
-        games: [
-          {
-            id: '3',
-            forfeitGamePoint: 0,
-            playerResults: [
-              { playerId: '1', playerName: '土屋政士', tablePoint: 4, gamePoint: 134 },
-              { playerId: '3', playerName: '遠藤俊晃', tablePoint: 2, gamePoint: -65 },
-              { playerId: '4', playerName: '左永', tablePoint: 3, gamePoint: 118 },
-              { playerId: '5', playerName: '柏木拓', tablePoint: 1, gamePoint: -187 },
-            ],
-          },
-          {
-            id: '4',
-            forfeitGamePoint: 0,
-            playerResults: [
-              { playerId: '2', playerName: '赤塚修', tablePoint: 4, gamePoint: 120 },
-              { playerId: '6', playerName: '二萬章吾', tablePoint: 2, gamePoint: -57 },
-              { playerId: '7', playerName: '小林英夫', tablePoint: 1, gamePoint: -58 },
-              { playerId: '8', playerName: '石橋大助', tablePoint: 3, gamePoint: -5 },
-            ],
-          },
-        ],
-      },
-      {
-        info: {
-          id: '3',
-          name: '3回戦',
-        },
-        games: [
-          {
-            id: '5',
-            forfeitGamePoint: 0,
-            playerResults: [
-              { playerId: '1', playerName: '土屋政士', tablePoint: 4, gamePoint: 284 },
-              { playerId: '2', playerName: '赤塚修', tablePoint: 2, gamePoint: -97 },
-              { playerId: '3', playerName: '遠藤俊晃', tablePoint: 3, gamePoint: -7 },
-              { playerId: '4', playerName: '左永', tablePoint: 1, gamePoint: -180 },
-            ],
-          },
-          {
-            id: '6',
-            forfeitGamePoint: 0,
-            playerResults: [
-              { playerId: '5', playerName: '柏木拓', tablePoint: 2, gamePoint: -7 },
-              { playerId: '6', playerName: '二萬章吾', tablePoint: 3, gamePoint: 57 },
-              { playerId: '7', playerName: '小林英夫', tablePoint: 1, gamePoint: 109 },
-              { playerId: '8', playerName: '石橋大助', tablePoint: 4, gamePoint: -159 },
-            ],
-          },
-        ],
-      },
-      {
-        info: {
-          id: '4',
-          name: '4回戦',
-        },
-        games: [
-          {
-            id: '7',
-            forfeitGamePoint: 0,
-            playerResults: [
-              { playerId: '1', playerName: '土屋政士', tablePoint: 1, gamePoint: -201 },
-              { playerId: '2', playerName: '赤塚修', tablePoint: 4, gamePoint: 121 },
-              { playerId: '3', playerName: '遠藤俊晃', tablePoint: 3, gamePoint: 95 },
-              { playerId: '4', playerName: '左永', tablePoint: 2, gamePoint: -15 },
-            ],
-          },
-          {
-            id: '8',
-            forfeitGamePoint: 0,
-            playerResults: [
-              { playerId: '5', playerName: '柏木拓', tablePoint: 4, gamePoint: 238 },
-              { playerId: '6', playerName: '二萬章吾', tablePoint: 3, gamePoint: 68 },
-              { playerId: '7', playerName: '小林英夫', tablePoint: 1, gamePoint: -209 },
-              { playerId: '8', playerName: '石橋大助', tablePoint: 2, gamePoint: -97 },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-] as ITournament[]
+      games: session.games.map((game) => ({
+        id: game.id.toString(),
+        forfeitGamePoint: game.forfeit_game_point,
+        playerResults: game.player_results.map((result) => ({
+          playerId: result.player_id.toString(),
+          playerName: result.player_name,
+          tablePoint: result.table_point,
+          gamePoint: result.game_point,
+          placePoint: result.table_point * 2 - 5,
+        })),
+      })),
+    })),
+  }
+}
 
 export const fetchTournaments = async (): Promise<ITournament[]> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(mockTournamentData)
-    }, 1000)
-  })
+  const { data, error } = await baseApi.GET('/v1/tournaments')
+
+  if (error) {
+    throw new Error(`Failed to fetch tournaments: ${error}`)
+  }
+
+  return transformTournamentList(data || [])
 }
 
 export const fetchTournamentById = async (id: string): Promise<ITournament | undefined> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const tournament = mockTournamentData.find((t) => t.id === id)
-      resolve(tournament)
-    }, 1000)
+  const { data, error } = await baseApi.GET('/v1/tournaments/{tournament_id}', {
+    params: {
+      path: {
+        tournament_id: parseInt(id, 10),
+      },
+    },
   })
+
+  if (error) {
+    console.error(`Failed to fetch tournament ${id}:`, error)
+    return undefined
+  }
+
+  return data ? transformTournamentDetail(data) : undefined
 }

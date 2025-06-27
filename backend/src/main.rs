@@ -79,6 +79,64 @@ struct PlayerStatsWithGames {
     game_details: Vec<GameDetail>,
 }
 
+#[derive(Serialize, Deserialize, sqlx::FromRow, Debug, ToSchema)]
+struct Tournament {
+    id: i32,
+    name: String,
+    sub_name: String,
+    #[schema(value_type = String, format = Date)]
+    date: NaiveDate,
+    location: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
+struct TournamentSummary {
+    player_id: i32,
+    player_name: String,
+    tournament_place: i32,
+    total_point: TotalPoint,
+    round_point: Vec<RoundPoint>,
+}
+
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
+struct TotalPoint {
+    table_point: f32,
+    game_point: i32,
+}
+
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
+struct RoundPoint {
+    table_point: f32,
+    game_point: i32,
+}
+
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
+struct SessionInfo {
+    id: i32,
+    name: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
+struct GameInfo {
+    id: i32,
+    forfeit_game_point: i32,
+    player_results: Vec<PlayerGameResult>,
+}
+
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
+struct SessionDetail {
+    info: SessionInfo,
+    games: Vec<GameInfo>,
+}
+
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
+struct TournamentDetail {
+    id: i32,
+    info: Tournament,
+    summary: Vec<TournamentSummary>,
+    sessions: Vec<SessionDetail>,
+}
+
 async fn health() -> Json<serde_json::Value> {
     Json(serde_json::json!({ "status": "ok" }))
 }
@@ -96,7 +154,9 @@ async fn main() {
     let api_routes = Router::new()
         .route("/", get(root))
         .route("/player_stats", get(get_player_stats_list))
-        .route("/player_stats/:player_id", get(get_player_stats));
+        .route("/player_stats/:player_id", get(get_player_stats))
+        .route("/tournaments", get(get_tournaments))
+        .route("/tournaments/:tournament_id", get(get_tournament));
 
     // TODO: set up Swagger UI
     // let swagger_ui = SwaggerUi::new("/swagger-ui").url("/api-doc/openapi.json", ApiDoc::openapi());
@@ -234,9 +294,265 @@ async fn get_player_stats(
     Ok(Json(result))
 }
 
+#[utoipa::path(
+    get,
+    path = "/v1/tournaments",
+    responses(
+        (status = 200, description = "Tournament list with details", body = [TournamentDetail])
+    )
+)]
+async fn get_tournaments(
+    State(pool): State<PgPool>,
+) -> Json<Vec<TournamentDetail>> {
+    let tournaments = sqlx::query_as::<_, Tournament>("SELECT id, name, sub_name, date, location FROM tournaments ORDER BY date DESC")
+        .fetch_all(&pool)
+        .await
+        .expect("Failed to fetch tournaments");
+
+    let mut tournament_details = Vec::new();
+    
+    for tournament in tournaments {
+        match get_tournament_detail(&pool, tournament.id).await {
+            Ok(detail) => tournament_details.push(detail),
+            Err(_) => {
+                tournament_details.push(TournamentDetail {
+                    id: tournament.id,
+                    info: tournament,
+                    summary: Vec::new(),
+                    sessions: Vec::new(),
+                });
+            }
+        }
+    }
+
+    Json(tournament_details)
+}
+
+async fn get_tournament_detail(pool: &PgPool, tournament_id: i32) -> Result<TournamentDetail, axum::http::StatusCode> {
+    let tournament = sqlx::query_as::<_, Tournament>(
+        "SELECT id, name, sub_name, date, location FROM tournaments WHERE id = $1"
+    )
+    .bind(tournament_id)
+    .fetch_one(pool)
+    .await
+    .map_err(|_| axum::http::StatusCode::NOT_FOUND)?;
+
+    #[derive(sqlx::FromRow)]
+    struct SummaryRow {
+        player_id: i32,
+        player_name: String,
+        total_table_point: Option<f32>,
+        total_game_point: Option<i64>,
+        tournament_place: Option<i64>,
+    }
+
+    let summary_raw = sqlx::query_as::<_, SummaryRow>(
+        r#"
+        SELECT 
+            p.id as player_id,
+            p.name as player_name,
+            COALESCE(SUM(gpr.table_point), 0) as total_table_point,
+            COALESCE(SUM(gpr.game_point), 0) as total_game_point,
+            ROW_NUMBER() OVER (ORDER BY COALESCE(SUM(gpr.table_point), 0) DESC, COALESCE(SUM(gpr.game_point), 0) DESC) as tournament_place
+        FROM players p
+        JOIN game_player_results gpr ON p.id = gpr.player_id
+        JOIN games g ON gpr.game_id = g.id
+        JOIN sessions s ON g.session_id = s.id
+        WHERE s.tournament_id = $1
+        GROUP BY p.id, p.name
+        ORDER BY total_table_point DESC, total_game_point DESC
+        "#
+    )
+    .bind(tournament_id)
+    .fetch_all(pool)
+    .await
+    .map_err(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR)?;
+
+    #[derive(sqlx::FromRow)]
+    struct RoundPointRow {
+        player_id: i32,
+        session_name: String,
+        session_table_point: Option<f32>,
+        session_game_point: Option<i64>,
+    }
+
+    let round_points_raw = sqlx::query_as::<_, RoundPointRow>(
+        r#"
+        SELECT 
+            p.id as player_id,
+            s.name as session_name,
+            COALESCE(SUM(gpr.table_point), 0) as session_table_point,
+            COALESCE(SUM(gpr.game_point), 0) as session_game_point
+        FROM players p
+        JOIN game_player_results gpr ON p.id = gpr.player_id
+        JOIN games g ON gpr.game_id = g.id
+        JOIN sessions s ON g.session_id = s.id
+        WHERE s.tournament_id = $1
+        GROUP BY p.id, s.id, s.name
+        ORDER BY p.id, s.id
+        "#
+    )
+    .bind(tournament_id)
+    .fetch_all(pool)
+    .await
+    .map_err(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR)?;
+
+    let mut summary: Vec<TournamentSummary> = Vec::new();
+    for player_summary in summary_raw {
+        let player_rounds: Vec<RoundPoint> = round_points_raw
+            .iter()
+            .filter(|r| r.player_id == player_summary.player_id)
+            .map(|r| RoundPoint {
+                table_point: r.session_table_point.unwrap_or(0.0),
+                game_point: r.session_game_point.unwrap_or(0) as i32,
+            })
+            .collect();
+
+        summary.push(TournamentSummary {
+            player_id: player_summary.player_id,
+            player_name: player_summary.player_name,
+            tournament_place: player_summary.tournament_place.unwrap_or(0) as i32,
+            total_point: TotalPoint {
+                table_point: player_summary.total_table_point.unwrap_or(0.0),
+                game_point: player_summary.total_game_point.unwrap_or(0) as i32,
+            },
+            round_point: player_rounds,
+        });
+    }
+
+    #[derive(sqlx::FromRow)]
+    struct SessionRow {
+        session_id: i32,
+        session_name: String,
+        game_id: i32,
+        forfeit_game_point: Option<i32>,
+        player_results: Option<serde_json::Value>,
+    }
+
+    let sessions_raw = sqlx::query_as::<_, SessionRow>(
+        r#"
+        SELECT 
+            s.id as session_id,
+            s.name as session_name,
+            g.id as game_id,
+            g.forfeit_game_point,
+            json_agg(json_build_object(
+                'player_id', gpr.player_id,
+                'player_name', p.name,
+                'table_point', gpr.table_point,
+                'game_point', gpr.game_point
+            ) ORDER BY gpr.id) as player_results
+        FROM sessions s
+        JOIN games g ON g.session_id = s.id
+        JOIN game_player_results gpr ON gpr.game_id = g.id
+        JOIN players p ON gpr.player_id = p.id
+        WHERE s.tournament_id = $1
+        GROUP BY s.id, s.name, g.id, g.forfeit_game_point
+        ORDER BY s.id, g.id
+        "#
+    )
+    .bind(tournament_id)
+    .fetch_all(pool)
+    .await
+    .map_err(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR)?;
+
+    let mut sessions: Vec<SessionDetail> = Vec::new();
+    let mut current_session: Option<SessionDetail> = None;
+
+    for session_data in sessions_raw {
+        let player_results_json: Vec<serde_json::Value> = serde_json::from_value(session_data.player_results.unwrap_or(serde_json::Value::Null))
+            .map_err(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR)?;
+        
+        let player_results: Vec<PlayerGameResult> = player_results_json
+            .into_iter()
+            .map(|result: serde_json::Value| PlayerGameResult {
+                player_id: result["player_id"].as_i64().unwrap_or(0) as i32,
+                player_name: result["player_name"].as_str().unwrap_or("").to_string(),
+                table_point: result["table_point"].as_f64().unwrap_or(0.0) as f32,
+                game_point: result["game_point"].as_i64().unwrap_or(0) as i32,
+                place_point: (result["table_point"].as_f64().unwrap_or(0.0) as f32 * 2.0 - 5.0),
+            })
+            .collect();
+
+        let game = GameInfo {
+            id: session_data.game_id,
+            forfeit_game_point: session_data.forfeit_game_point.unwrap_or(0),
+            player_results,
+        };
+
+        if let Some(ref mut session) = current_session {
+            if session.info.id == session_data.session_id {
+                session.games.push(game);
+            } else {
+                sessions.push(current_session.take().unwrap());
+                current_session = Some(SessionDetail {
+                    info: SessionInfo {
+                        id: session_data.session_id,
+                        name: session_data.session_name,
+                    },
+                    games: vec![game],
+                });
+            }
+        } else {
+            current_session = Some(SessionDetail {
+                info: SessionInfo {
+                    id: session_data.session_id,
+                    name: session_data.session_name,
+                },
+                games: vec![game],
+            });
+        }
+    }
+
+    if let Some(session) = current_session {
+        sessions.push(session);
+    }
+
+    let result = TournamentDetail {
+        id: tournament.id,
+        info: tournament,
+        summary,
+        sessions,
+    };
+
+    Ok(result)
+}
+
+#[utoipa::path(
+    get,
+    path = "/v1/tournaments/{tournament_id}",
+    params(
+        ("tournament_id" = i32, Path, description = "Tournament ID")
+    ),
+    responses(
+        (status = 200, description = "Tournament detail", body = TournamentDetail),
+        (status = 404, description = "Tournament not found")
+    )
+)]
+async fn get_tournament(
+    State(pool): State<PgPool>,
+    axum::extract::Path(tournament_id): axum::extract::Path<i32>,
+) -> Result<Json<TournamentDetail>, axum::http::StatusCode> {
+    let detail = get_tournament_detail(&pool, tournament_id).await?;
+    Ok(Json(detail))
+}
+
 #[derive(OpenApi)]
 #[openapi(
-    paths(get_player_stats_list, get_player_stats),
-    components(schemas(PlayerStats, PlayerStatsWithGames, GameDetail, PlayerGameResult))
+    paths(get_player_stats_list, get_player_stats, get_tournaments, get_tournament),
+    components(schemas(
+        PlayerStats, 
+        PlayerStatsWithGames, 
+        GameDetail, 
+        PlayerGameResult,
+        Tournament,
+        TournamentDetail,
+        TournamentSummary,
+        TotalPoint,
+        RoundPoint,
+        SessionDetail,
+        SessionInfo,
+        GameInfo
+    ))
 )]
 struct ApiDoc;

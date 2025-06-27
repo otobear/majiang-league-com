@@ -31,6 +31,7 @@ export interface IPlayerResponse {
         playerName: string
         tablePoint: number
         gamePoint: number
+        placePoint: number
       }[]
     }[]
   }[]
@@ -70,6 +71,7 @@ export interface ITournament {
         playerName: string
         tablePoint: number
         gamePoint: number
+        placePoint: number
       }[]
     }[]
   }[]
