@@ -116,7 +116,6 @@ export interface components {
             fourth_place_ratio?: number | null;
             /** Format: int64 */
             game_count?: number | null;
-            game_details: components["schemas"]["GameDetail"][];
             /** Format: int32 */
             player_id: number;
             player_name: string;
@@ -134,6 +133,8 @@ export interface components {
             total_pp?: number | null;
             /** Format: float */
             total_tp?: number | null;
+        } & {
+            game_details: components["schemas"]["GameDetail"][];
         };
     };
     responses: never;

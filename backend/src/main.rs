@@ -73,23 +73,9 @@ struct GameDetail {
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 struct PlayerStatsWithGames {
-    player_id: i32,
-    player_name: String,
-    game_count: Option<i64>,
-    total_gp: Option<i64>,
-    total_tp: Option<f32>,
-    total_pp: Option<f32>,
-    first_place_count: Option<i64>,
-    second_place_count: Option<i64>,
-    third_place_count: Option<i64>,
-    fourth_place_count: Option<i64>,
-    avg_gp: Option<f32>,
-    avg_tp: Option<f32>,
-    avg_pp: Option<f32>,
-    first_place_ratio: Option<f32>,
-    second_place_ratio: Option<f32>,
-    third_place_ratio: Option<f32>,
-    fourth_place_ratio: Option<f32>,
+    #[serde(flatten)]
+    #[schema(inline)]
+    stats: PlayerStats,
     game_details: Vec<GameDetail>,
 }
 
@@ -226,7 +212,7 @@ async fn get_player_stats(
         .map(|raw| -> Result<GameDetail, axum::http::StatusCode> {
             let players: Vec<PlayerGameResult> = serde_json::from_value(raw.players)
                 .map_err(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR)?;
-Ok(GameDetail {
+            Ok(GameDetail {
                 game_id: raw.game_id,
                 tournament_id: raw.tournament_id,
                 tournament_name: raw.tournament_name,
@@ -241,23 +227,7 @@ Ok(GameDetail {
     let games = game_details?;
 
     let result = PlayerStatsWithGames {
-        player_id: stats.player_id,
-        player_name: stats.player_name,
-        game_count: stats.game_count,
-        total_gp: stats.total_gp,
-        total_tp: stats.total_tp,
-        total_pp: stats.total_pp,
-        first_place_count: stats.first_place_count,
-        second_place_count: stats.second_place_count,
-        third_place_count: stats.third_place_count,
-        fourth_place_count: stats.fourth_place_count,
-        avg_gp: stats.avg_gp,
-        avg_tp: stats.avg_tp,
-        avg_pp: stats.avg_pp,
-        first_place_ratio: stats.first_place_ratio,
-        second_place_ratio: stats.second_place_ratio,
-        third_place_ratio: stats.third_place_ratio,
-        fourth_place_ratio: stats.fourth_place_ratio,
+        stats,
         game_details: games,
     };
 
