@@ -16,14 +16,13 @@
           <Row>
             <Column header="順位" :rowspan="2" />
             <Column header="氏名" :rowspan="2" />
-            <Column header="合計" :colspan="2" />
+            <Column header="合計" :colspan="2" class="bg-green-200" />
             <Column header="1回戦" :colspan="2" />
             <Column header="2回戦" :colspan="2" />
             <Column header="3回戦" :colspan="2" />
             <Column header="4回戦" :colspan="2" />
           </Row>
           <Row>
-            <Column header="順位点" />
             <Column header="素点" />
             <Column header="順位点" />
             <Column header="素点" />
@@ -33,9 +32,10 @@
             <Column header="素点" />
             <Column header="順位点" />
             <Column header="素点" />
+            <Column header="順位点" />
           </Row>
         </ColumnGroup>
-        <Column field="tournamentPlace" :body-class="'text-right'" />
+        <Column field="tournamentPlace" body-style="text-align: right" />
         <Column field="playerName">
           <template #body="slotProps">
             <router-link
@@ -46,13 +46,8 @@
             </router-link>
           </template>
         </Column>
-        <Column field="totalPoint.tablePoint" style="text-align: right" />
-        <Column field="totalPoint.gamePoint" style="text-align: right" />
-        <Column>
-          <template #body="slotProps">
-            <span class="block text-right">{{ slotProps.data.roundPoint[0].tablePoint }}</span>
-          </template>
-        </Column>
+        <Column field="totalPoint.gamePoint" body-style="text-align: right" body-class="bg-green-200" />
+        <Column field="totalPoint.tablePoint" body-style="text-align: right" body-class="bg-green-200 font-bold" />
         <Column>
           <template #body="slotProps">
             <span class="block text-right">{{ slotProps.data.roundPoint[0].gamePoint }}</span>
@@ -60,7 +55,7 @@
         </Column>
         <Column>
           <template #body="slotProps">
-            <span class="block text-right">{{ slotProps.data.roundPoint[1].tablePoint }}</span>
+            <span class="block text-right font-bold">{{ slotProps.data.roundPoint[0].tablePoint }}</span>
           </template>
         </Column>
         <Column>
@@ -70,7 +65,7 @@
         </Column>
         <Column>
           <template #body="slotProps">
-            <span class="block text-right">{{ slotProps.data.roundPoint[2].tablePoint }}</span>
+            <span class="block text-right font-bold">{{ slotProps.data.roundPoint[1].tablePoint }}</span>
           </template>
         </Column>
         <Column>
@@ -80,7 +75,7 @@
         </Column>
         <Column>
           <template #body="slotProps">
-            <span class="block text-right">{{ slotProps.data.roundPoint[3].tablePoint }}</span>
+            <span class="block text-right font-bold">{{ slotProps.data.roundPoint[2].tablePoint }}</span>
           </template>
         </Column>
         <Column>
@@ -88,23 +83,24 @@
             <span class="block text-right">{{ slotProps.data.roundPoint[3].gamePoint }}</span>
           </template>
         </Column>
+        <Column>
+          <template #body="slotProps">
+            <span class="block text-right font-bold">{{ slotProps.data.roundPoint[3].tablePoint }}</span>
+          </template>
+        </Column>
       </DataTable>
       <div class="mt-8">
-        <h2 class="mb-2 text-lg font-semibold">対局詳細</h2>
-        <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
-          <div
-            v-for="session in tournamentData.sessions.slice(0, Math.ceil(tournamentData.sessions.length / 2))"
-            :key="session.info.id"
-            class="mb-6"
-          >
+        <h2 class="mb-8 text-lg font-semibold">対局詳細</h2>
+        <div class="flex flex-wrap justify-between">
+          <div v-for="session in tournamentData.sessions" :key="session.info.id" class="mb-6">
             <div class="mb-1 font-semibold">{{ session.info.name }}</div>
             <DataTable :value="session.games" class="min-w-full text-xs">
-              <Column header="卓" style="width: 40px">
+              <Column header="卓" class="max-w-8">
                 <template #body="slotProps">
-                  <span class="block text-right">{{ slotProps.data.id }}</span>
+                  <span class="block text-right">{{ slotProps.index + 1 }}</span>
                 </template>
               </Column>
-              <Column header="氏名">
+              <Column header="氏名" class="min-w-28">
                 <template #body="slotProps">
                   <div v-for="result in slotProps.data.playerResults" :key="result.playerId">
                     <router-link
@@ -114,60 +110,15 @@
                       {{ result.playerName }}
                     </router-link>
                   </div>
+                  <span class="block">供託</span>
                 </template>
               </Column>
-              <Column header="素点">
+              <Column header="素点 / 順位点" class="min-w-18">
                 <template #body="slotProps">
                   <div v-for="result in slotProps.data.playerResults" :key="result.playerId">
-                    <span class="block text-right">{{ result.gamePoint }}</span>
+                    <span class="block text-right">{{ result.gamePoint }} / {{ result.tablePoint }}</span>
                   </div>
-                </template>
-              </Column>
-              <Column header="順位点">
-                <template #body="slotProps">
-                  <div v-for="result in slotProps.data.playerResults" :key="result.playerId">
-                    <span class="block text-right">{{ result.tablePoint }}</span>
-                  </div>
-                </template>
-              </Column>
-            </DataTable>
-          </div>
-          <div
-            v-for="session in tournamentData.sessions.slice(Math.ceil(tournamentData.sessions.length / 2))"
-            :key="session.info.id"
-            class="mb-6"
-          >
-            <div class="mb-1 font-semibold">{{ session.info.name }}</div>
-            <DataTable :value="session.games" class="min-w-full text-xs">
-              <Column header="卓" style="width: 40px">
-                <template #body="slotProps">
-                  <span class="block text-right">{{ slotProps.data.id }}</span>
-                </template>
-              </Column>
-              <Column header="氏名">
-                <template #body="slotProps">
-                  <div v-for="result in slotProps.data.playerResults" :key="result.playerId">
-                    <router-link
-                      :to="{ name: 'player', params: { id: result.playerId } }"
-                      class="text-green-600 underline hover:text-green-800"
-                    >
-                      {{ result.playerName }}
-                    </router-link>
-                  </div>
-                </template>
-              </Column>
-              <Column header="素点">
-                <template #body="slotProps">
-                  <div v-for="result in slotProps.data.playerResults" :key="result.playerId">
-                    <span class="block text-right">{{ result.gamePoint }}</span>
-                  </div>
-                </template>
-              </Column>
-              <Column header="順位点">
-                <template #body="slotProps">
-                  <div v-for="result in slotProps.data.playerResults" :key="result.playerId">
-                    <span class="block text-right">{{ result.tablePoint }}</span>
-                  </div>
+                  <span class="block text-right">{{ slotProps.data.forfeitGamePoint }} / 0</span>
                 </template>
               </Column>
             </DataTable>
