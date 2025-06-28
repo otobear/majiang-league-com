@@ -19,7 +19,7 @@ const router = createRouter({
       },
     },
     {
-      path: '/player/:id',
+      path: '/players/:id',
       name: 'player',
       component: () => import('@/pages/player'),
       meta: {
@@ -34,7 +34,7 @@ const router = createRouter({
       },
     },
     {
-      path: '/tournament/:id',
+      path: '/tournaments/:id',
       name: 'tournament',
       component: () => import('@/pages/tournament'),
       meta: {
