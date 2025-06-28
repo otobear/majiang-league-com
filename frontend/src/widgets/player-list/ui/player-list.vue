@@ -8,7 +8,7 @@
       :allow-empty="false"
     />
     <DataTable :value="playersData" sortField="rpTotal" :sortOrder="-1" row-hover>
-      <Column header="着順">
+      <Column header="順位">
         <template #body="slotProps">
           <span class="block text-right">{{ slotProps.index + 1 }}</span>
         </template>
@@ -23,42 +23,14 @@
           </RouterLink>
         </template>
       </Column>
-      <Column header="対局数" field="gameCount" sortable>
-        <template #body="slotProps">
-          <span class="block text-right">{{ slotProps.data.gameCount }}</span>
-        </template>
-      </Column>
+      <Column header="対局数" field="gameCount" sortable body-style="text-align: right" />
       <template v-if="aggregationType.value === 'total'">
-        <Column header="通算着順" field="rpTotal" sortable>
-          <template #body="slotProps">
-            <span class="block text-right">{{ slotProps.data.rpTotal }}</span>
-          </template>
-        </Column>
-        <Column header="1着数" field="firstPlaceCount" sortable>
-          <template #body="slotProps">
-            <span class="block text-right">{{ slotProps.data.firstPlaceCount }}</span>
-          </template>
-        </Column>
-        <Column header="2着数" field="secondPlaceCount" sortable>
-          <template #body="slotProps">
-            <span class="block text-right">{{ slotProps.data.secondPlaceCount }}</span>
-          </template>
-        </Column>
-        <Column header="3着数" field="thirdPlaceCount" sortable>
-          <template #body="slotProps">
-            <span class="block text-right">{{ slotProps.data.thirdPlaceCount }}</span>
-          </template>
-        </Column>
-        <Column header="4着数" field="fourthPlaceCount" sortable>
-          <template #body="slotProps">
-            <span class="block text-right">{{ slotProps.data.fourthPlaceCount }}</span>
-          </template>
-        </Column>
-        <Column header="通算素点" field="gpTotal" sortable>
-          <template #body="slotProps">
-            <span class="block text-right">{{ slotProps.data.gpTotal }}</span>
-          </template>
-        </Column>
+        <Column header="通算着順" field="rpTotal" sortable body-style="text-align: right" />
+        <Column header="1着数" field="firstPlaceCount" sortable body-style="text-align: right" />
+        <Column header="2着数" field="secondPlaceCount" sortable body-style="text-align: right" />
+        <Column header="3着数" field="thirdPlaceCount" sortable body-style="text-align: right" />
+        <Column header="4着数" field="fourthPlaceCount" sortable body-style="text-align: right" />
+        <Column header="通算素点" field="gpTotal" sortable body-style="text-align: right" />
       </template>
       <template v-else>
         <Column header="平均順位" field="tpAvg" sortable>
@@ -86,11 +58,7 @@
             <span class="block text-right">{{ slotProps.data.fourthPlacePercentage.toFixed(0) }}%</span>
           </template>
         </Column>
-        <Column header="平均素点" field="gpAvg" sortable>
-          <template #body="slotProps">
-            <span class="block text-right">{{ slotProps.data.gpAvg }}</span>
-          </template>
-        </Column>
+        <Column header="平均素点" field="gpAvg" sortable body-style="text-align: right" />
       </template>
     </DataTable>
   </div>

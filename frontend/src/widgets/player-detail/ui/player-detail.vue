@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-8 rounded-lg py-8">
+  <div class="flex flex-col gap-8 rounded-lg">
     <template v-if="playerData">
       <div class="text-xl font-semibold">{{ playerData.name }}</div>
       <div class="flex gap-4">
@@ -49,14 +49,8 @@
       <div class="flex gap-8">
         <div class="flex-1 rounded-lg bg-white p-8 shadow">
           <p class="text-xl font-semibold">順位分布</p>
-          <DataTable :value="placeStats" class="mt-4 text-end">
-            <Column field="placeName" header="順位" class="bg-gray-100">
-              <template #body="slotProps">
-                <div class="text-center font-medium">
-                  {{ slotProps.data.placeName }}
-                </div>
-              </template>
-            </Column>
+          <DataTable :value="placeStats" class="mt-4">
+            <Column field="placeName" header="順位" class="bg-gray-100" body-style="text-align: center" />
             <Column field="count" header="回数">
               <template #body="slotProps">
                 <p class="flex items-baseline justify-end gap-1">
@@ -78,13 +72,7 @@
         <div class="flex-1 rounded-lg bg-white p-8 shadow">
           <p class="text-xl font-semibold">座順別成績</p>
           <DataTable :value="seatStats" class="mt-4 text-end">
-            <Column field="seatName" header="座順" class="bg-gray-100">
-              <template #body="slotProps">
-                <div class="text-center font-medium">
-                  {{ slotProps.data.seatName }}
-                </div>
-              </template>
-            </Column>
+            <Column field="seatName" header="座順" class="bg-gray-100" body-style="text-align: center" />
             <Column field="count" header="回数">
               <template #body="slotProps">
                 <p class="flex items-baseline justify-end gap-1">
