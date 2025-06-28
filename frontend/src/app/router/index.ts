@@ -6,10 +6,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      component: () => import('@/pages/home'),
-      meta: {
-        layout: DefaultLayout,
-      },
+      redirect: '/players',
     },
     {
       path: '/players',
