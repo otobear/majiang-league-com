@@ -4,17 +4,48 @@
       <img alt="Logo" src="@/shared/assets/logo.png" class="h-8 w-8" />
       <h1 class="text-2xl font-bold">ちゅんま関東リーグ</h1>
     </RouterLink>
-    <nav class="space-x-6">
-      <RouterLink
-        to="/players"
-        class="border-b-2 border-transparent pb-1 transition-colors hover:border-yellow-200 hover:text-yellow-200"
-        >総合成績</RouterLink
-      >
-      <RouterLink
-        to="/tournaments"
-        class="border-b-2 border-transparent pb-1 transition-colors hover:border-yellow-200 hover:text-yellow-200"
-        >対局結果</RouterLink
-      >
+    <nav>
+      <Tabs :value="activeTab" unstyled class="bg-green-600">
+        <TabList>
+          <Tab value="players" class="h-16">
+            <RouterLink
+              to="/players"
+              class="pb-1 hover:border-yellow-200 hover:text-yellow-200"
+              :class="{ 'border-yellow-200 text-yellow-200': activeTab === 'players' }"
+            >
+              総合成績
+            </RouterLink>
+          </Tab>
+          <Tab value="tournaments" class="ml-4 h-16">
+            <RouterLink
+              to="/tournaments"
+              class="px-4 hover:border-yellow-200 hover:text-yellow-200"
+              :class="{ '!border-yellow-200 !text-yellow-200': activeTab === 'tournaments' }"
+            >
+              対局結果
+            </RouterLink>
+          </Tab>
+        </TabList>
+      </Tabs>
     </nav>
   </header>
 </template>
+
+<script setup lang="ts">
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+import { Tab, TabList, Tabs } from 'primevue'
+
+const route = useRoute()
+
+const activeTab = computed(() => {
+  const path = route.path
+  if (path.startsWith('/players')) {
+    return 'players'
+  } else if (path.startsWith('/tournaments')) {
+    return 'tournaments'
+  }
+
+  return 'players'
+})
+</script>
