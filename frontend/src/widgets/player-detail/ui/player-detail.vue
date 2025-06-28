@@ -65,7 +65,7 @@
                 </p>
               </template>
             </Column>
-            <Column field="ratio" header="割合">
+            <Column field="ratio" header="率">
               <template #body="slotProps">
                 <p class="flex items-baseline justify-end gap-1">
                   <span class="text-xl font-semibold text-gray-800">{{ slotProps.data.ratio.toFixed(2) }}</span>

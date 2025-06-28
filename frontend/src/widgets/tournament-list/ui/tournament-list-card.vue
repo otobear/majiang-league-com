@@ -34,7 +34,11 @@
           <Column header="素点" />
         </Row>
       </ColumnGroup>
-      <Column field="tournamentPlace" :body-class="'text-right'" />
+      <Column field="tournamentPlace">
+        <template #body="slotProps">
+          <span class="block text-right">{{ slotProps.data.tournamentPlace }}</span>
+        </template>
+      </Column>
       <Column field="playerName">
         <template #body="slotProps">
           <router-link
@@ -45,8 +49,16 @@
           </router-link>
         </template>
       </Column>
-      <Column field="totalPoint.tablePoint" style="text-align: right" />
-      <Column field="totalPoint.gamePoint" style="text-align: right" />
+      <Column field="totalPoint.tablePoint">
+        <template #body="slotProps">
+          <span class="block text-right">{{ slotProps.data.totalPoint.tablePoint }}</span>
+        </template>
+      </Column>
+      <Column field="totalPoint.gamePoint">
+        <template #body="slotProps">
+          <span class="block text-right">{{ slotProps.data.totalPoint.gamePoint }}</span>
+        </template>
+      </Column>
       <Column>
         <template #body="slotProps">
           <span class="block text-right">{{ slotProps.data.roundPoint[0].tablePoint }}</span>
