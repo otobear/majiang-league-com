@@ -25,7 +25,7 @@
       </Column>
       <Column header="対局数" field="gameCount" sortable body-style="text-align: right" />
       <template v-if="aggregationType.value === 'total'">
-        <Column header="通算着順" field="rpTotal" sortable body-style="text-align: right" />
+        <Column header="通算評価" field="rpTotal" sortable body-style="text-align: right" />
         <Column header="1着数" field="firstPlaceCount" sortable body-style="text-align: right" />
         <Column header="2着数" field="secondPlaceCount" sortable body-style="text-align: right" />
         <Column header="3着数" field="thirdPlaceCount" sortable body-style="text-align: right" />

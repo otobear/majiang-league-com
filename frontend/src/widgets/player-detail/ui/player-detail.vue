@@ -16,7 +16,7 @@
             <template #icon>
               <i class="pi pi-trophy text-2xl text-gray-600"></i>
             </template>
-            <template #label>通算着順</template>
+            <template #label>通算評価</template>
             <template #value>{{ playerData.rpTotal }}</template>
             <template #unit>pt</template>
           </StatusCard>
@@ -132,7 +132,7 @@
               </p>
             </template>
           </Column>
-          <Column field="totalPlacePointDiff" header="通算着順点差" sortable>
+          <Column field="totalPlacePointDiff" header="通算評価差" sortable>
             <template #body="slotProps">
               <p class="flex items-baseline justify-end gap-1">
                 <span
