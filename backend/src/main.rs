@@ -221,14 +221,12 @@ async fn get_player_stats(
     State(pool): State<PgPool>,
     axum::extract::Path(player_id): axum::extract::Path<i32>,
 ) -> Result<Json<PlayerStatsWithGames>, axum::http::StatusCode> {
-    // 获取玩家统计信息
     let stats = sqlx::query_as::<_, PlayerStats>("SELECT * FROM player_stats WHERE player_id = $1")
         .bind(player_id)
         .fetch_one(&pool)
         .await
         .map_err(|_| axum::http::StatusCode::NOT_FOUND)?;
 
-    // 获取玩家的所有比赛详情，包含同桌其他玩家
     let game_details_raw = sqlx::query_as::<_, GameDetailRaw>(
         r#"
         SELECT 
@@ -266,7 +264,6 @@ async fn get_player_stats(
     .await
     .map_err(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR)?;
 
-    // 转换为最终格式
     let game_details: Result<Vec<GameDetail>, axum::http::StatusCode> = game_details_raw
         .into_iter()
         .map(|raw| -> Result<GameDetail, axum::http::StatusCode> {

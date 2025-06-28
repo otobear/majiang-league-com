@@ -46,6 +46,10 @@
           </StatusCard>
         </div>
       </div>
+      <div class="rounded-lg bg-blue-50 p-4 text-sm text-gray-700">
+        <p class="mb-1 font-medium text-blue-800">通算評価について</p>
+        <p>通算評価とは、一荘ごとに1位+3pt、2位+1pt、3位-1pt、4位-3ptを加算したものです。</p>
+      </div>
       <div class="flex gap-8">
         <div class="flex-1 rounded-lg bg-white p-8 shadow">
           <p class="text-xl font-semibold">順位分布</p>
@@ -111,8 +115,8 @@
           class="mt-4 text-end"
           sort-field="totalPlacePointDiff"
           :sort-order="-1"
-          :scrollable="true"
-          scrollHeight="400px"
+          scrollable
+          scroll-height="400px"
         >
           <Column field="playerName" header="氏名">
             <template #body="slotProps">
@@ -143,8 +147,7 @@
                     'text-gray-800': slotProps.data.totalPlacePointDiff === 0,
                   }"
                 >
-                  {{ slotProps.data.totalPlacePointDiff > 0 ? '+' : ''
-                  }}{{ slotProps.data.totalPlacePointDiff.toFixed(2) }}
+                  {{ slotProps.data.totalPlacePointDiff > 0 ? '+' : '' }}{{ slotProps.data.totalPlacePointDiff }}
                 </span>
                 <span class="text-sm font-semibold text-gray-800">pt</span>
               </p>

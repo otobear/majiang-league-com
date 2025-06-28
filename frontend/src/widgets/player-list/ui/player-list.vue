@@ -7,7 +7,7 @@
       data-key="label"
       :allow-empty="false"
     />
-    <DataTable :value="playersData" sortField="rpTotal" :sortOrder="-1" row-hover>
+    <DataTable :value="playersData" sortField="rpTotal" :sortOrder="-1" row-hover class="flex-1">
       <Column header="順位">
         <template #body="slotProps">
           <span class="block text-right">{{ slotProps.index + 1 }}</span>
@@ -61,7 +61,13 @@
         <Column header="平均素点" field="gpAvg" sortable body-style="text-align: right" />
       </template>
     </DataTable>
+
+    <div class="rounded-lg bg-blue-50 p-4 text-sm text-gray-700">
+      <p class="mb-1 font-medium text-blue-800">通算評価について</p>
+      <p>通算評価とは、一荘ごとに1位3pt、2位1pt、3位-1pt、4位-3ptを加算したものです。</p>
+    </div>
   </div>
+
   <LoadingSpinner v-else />
 </template>
 
