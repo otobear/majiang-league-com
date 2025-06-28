@@ -1,94 +1,7 @@
 <template>
   <div class="flex flex-col gap-8 rounded-lg bg-white p-8 shadow">
     <template v-if="tournamentData">
-      <div class="flex items-baseline justify-between">
-        <div class="flex gap-2 text-2xl font-bold">
-          <span>{{ tournamentData.info.name }}</span>
-          <span>{{ tournamentData.info.subName }}</span>
-        </div>
-        <div class="flex gap-2">
-          <span>{{ tournamentData.info.date }}</span>
-          <span>{{ tournamentData.info.location }}</span>
-        </div>
-      </div>
-      <DataTable :value="tournamentData.summary" class="min-w-full text-sm">
-        <ColumnGroup type="header">
-          <Row>
-            <Column header="順位" :rowspan="2" />
-            <Column header="氏名" :rowspan="2" />
-            <Column header="合計" :colspan="2" class="bg-green-200" />
-            <Column header="1回戦" :colspan="2" />
-            <Column header="2回戦" :colspan="2" />
-            <Column header="3回戦" :colspan="2" />
-            <Column header="4回戦" :colspan="2" />
-          </Row>
-          <Row>
-            <Column header="素点" />
-            <Column header="順位点" />
-            <Column header="素点" />
-            <Column header="順位点" />
-            <Column header="素点" />
-            <Column header="順位点" />
-            <Column header="素点" />
-            <Column header="順位点" />
-            <Column header="素点" />
-            <Column header="順位点" />
-          </Row>
-        </ColumnGroup>
-        <Column field="tournamentPlace" body-style="text-align: right" />
-        <Column field="playerName">
-          <template #body="slotProps">
-            <router-link
-              :to="{ name: 'player', params: { id: slotProps.data.playerId } }"
-              class="text-green-600 underline hover:text-green-800"
-            >
-              {{ slotProps.data.playerName }}
-            </router-link>
-          </template>
-        </Column>
-        <Column field="totalPoint.gamePoint" body-style="text-align: right" body-class="bg-green-200" />
-        <Column field="totalPoint.tablePoint" body-style="text-align: right" body-class="bg-green-200 font-bold" />
-        <Column>
-          <template #body="slotProps">
-            <span class="block text-right">{{ slotProps.data.roundPoint[0].gamePoint }}</span>
-          </template>
-        </Column>
-        <Column>
-          <template #body="slotProps">
-            <span class="block text-right font-bold">{{ slotProps.data.roundPoint[0].tablePoint }}</span>
-          </template>
-        </Column>
-        <Column>
-          <template #body="slotProps">
-            <span class="block text-right">{{ slotProps.data.roundPoint[1].gamePoint }}</span>
-          </template>
-        </Column>
-        <Column>
-          <template #body="slotProps">
-            <span class="block text-right font-bold">{{ slotProps.data.roundPoint[1].tablePoint }}</span>
-          </template>
-        </Column>
-        <Column>
-          <template #body="slotProps">
-            <span class="block text-right">{{ slotProps.data.roundPoint[2].gamePoint }}</span>
-          </template>
-        </Column>
-        <Column>
-          <template #body="slotProps">
-            <span class="block text-right font-bold">{{ slotProps.data.roundPoint[2].tablePoint }}</span>
-          </template>
-        </Column>
-        <Column>
-          <template #body="slotProps">
-            <span class="block text-right">{{ slotProps.data.roundPoint[3].gamePoint }}</span>
-          </template>
-        </Column>
-        <Column>
-          <template #body="slotProps">
-            <span class="block text-right font-bold">{{ slotProps.data.roundPoint[3].tablePoint }}</span>
-          </template>
-        </Column>
-      </DataTable>
+      <TournamentSummaryTable :tournament="tournamentData" />
       <div class="mt-8">
         <h2 class="mb-8 text-lg font-semibold">対局詳細</h2>
         <div class="flex flex-wrap justify-between">
@@ -133,10 +46,11 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { Column, ColumnGroup, DataTable, Row } from 'primevue'
+import { Column, DataTable } from 'primevue'
 import { fetchTournamentById } from '@/entities/tournament'
 import type { ITournament } from '@/entities/tournament'
 import { LoadingSpinner } from '@/shared/ui/loading-spinner'
+import { TournamentSummaryTable } from '@/shared/ui/tournament-summary-table'
 
 const route = useRoute()
 const tournamentData = ref<ITournament>()

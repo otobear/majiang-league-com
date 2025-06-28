@@ -7,7 +7,7 @@
       data-key="label"
       :allow-empty="false"
     />
-    <DataTable :value="playersData" sortField="rpTotal" :sortOrder="-1">
+    <DataTable :value="playersData" sortField="rpTotal" :sortOrder="-1" row-hover>
       <Column header="着順">
         <template #body="slotProps">
           <span class="block text-right">{{ slotProps.index + 1 }}</span>
