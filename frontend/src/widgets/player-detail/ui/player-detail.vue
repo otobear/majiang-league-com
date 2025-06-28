@@ -128,12 +128,12 @@
         >
           <Column field="playerName" header="氏名">
             <template #body="slotProps">
-              <router-link
+              <RouterLink
                 :to="{ name: 'player', params: { id: slotProps.data.playerId } }"
                 class="text-green-600 underline hover:text-green-800"
               >
                 {{ slotProps.data.playerName }}
-              </router-link>
+              </RouterLink>
             </template>
           </Column>
           <Column field="gameCount" header="対戦数" sortable>
@@ -218,7 +218,7 @@
               </div>
             </template>
             <template #body="slotProps">
-              <router-link
+              <RouterLink
                 v-if="slotProps.data.game1"
                 :to="{ name: 'tournament', params: { id: slotProps.data.game1.tournamentId } }"
                 class="flex justify-between"
@@ -228,7 +228,7 @@
                   {{ slotProps.data.game1.gamePoint }} / {{ slotProps.data.game1.tablePoint }}
                 </div>
                 <i class="material-symbols-outlined text-sm text-green-600">arrow_forward</i>
-              </router-link>
+              </RouterLink>
             </template>
           </Column>
           <Column>
@@ -240,7 +240,7 @@
               </div>
             </template>
             <template #body="slotProps">
-              <router-link
+              <RouterLink
                 v-if="slotProps.data.game2"
                 :to="{ name: 'tournament', params: { id: slotProps.data.game2.tournamentId } }"
                 class="flex justify-between"
@@ -250,7 +250,7 @@
                   {{ slotProps.data.game2.gamePoint }} / {{ slotProps.data.game2.tablePoint }}
                 </div>
                 <i class="material-symbols-outlined text-sm text-green-600">arrow_forward</i>
-              </router-link>
+              </RouterLink>
             </template>
           </Column>
         </DataTable>

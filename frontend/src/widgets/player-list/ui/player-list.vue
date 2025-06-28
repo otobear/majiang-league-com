@@ -15,12 +15,12 @@
       </Column>
       <Column header="選手名" field="name">
         <template #body="slotProps">
-          <router-link
+          <RouterLink
             :to="{ name: 'player', params: { id: slotProps.data.id } }"
             class="text-green-600 underline hover:text-green-800"
           >
             {{ slotProps.data.name }}
-          </router-link>
+          </RouterLink>
         </template>
       </Column>
       <Column header="対局数" field="gameCount" sortable>

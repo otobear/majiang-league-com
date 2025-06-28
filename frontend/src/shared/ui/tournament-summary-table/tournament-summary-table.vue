@@ -38,12 +38,12 @@
       <Column field="tournamentPlace" body-style="text-align: right" />
       <Column field="playerName">
         <template #body="slotProps">
-          <router-link
+          <RouterLink
             :to="{ name: 'player', params: { id: slotProps.data.playerId } }"
             class="text-green-600 underline hover:text-green-800"
           >
             {{ slotProps.data.playerName }}
-          </router-link>
+          </RouterLink>
         </template>
       </Column>
       <Column field="totalPoint.gamePoint" body-style="text-align: right" body-class="bg-green-200" />

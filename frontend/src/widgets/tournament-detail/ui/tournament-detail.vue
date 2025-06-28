@@ -16,12 +16,12 @@
               <Column header="氏名" class="min-w-28">
                 <template #body="slotProps">
                   <div v-for="result in slotProps.data.playerResults" :key="result.playerId">
-                    <router-link
+                    <RouterLink
                       :to="{ name: 'player', params: { id: result.playerId } }"
                       class="text-green-600 underline hover:text-green-800"
                     >
                       {{ result.playerName }}
-                    </router-link>
+                    </RouterLink>
                   </div>
                   <span class="block">供託</span>
                 </template>
