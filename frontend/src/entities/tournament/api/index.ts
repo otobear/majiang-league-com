@@ -55,7 +55,7 @@ function transformTournamentList(apiTournaments: TournamentDetailApiResponse[]):
 
 function transformTournamentDetail(apiTournament: TournamentDetailApiResponse): ITournament {
   return {
-    id: apiTournament.id.toString(),
+    id: apiTournament.id,
     info: {
       name: apiTournament.info.name,
       subName: apiTournament.info.sub_name,
@@ -63,7 +63,7 @@ function transformTournamentDetail(apiTournament: TournamentDetailApiResponse): 
       location: apiTournament.info.location,
     },
     summary: apiTournament.summary.map((summary) => ({
-      playerId: summary.player_id.toString(),
+      playerId: summary.player_id,
       playerName: summary.player_name,
       tournamentPlace: summary.tournament_place,
       totalPoint: {
@@ -77,14 +77,14 @@ function transformTournamentDetail(apiTournament: TournamentDetailApiResponse): 
     })),
     sessions: apiTournament.sessions.map((session) => ({
       info: {
-        id: session.info.id.toString(),
+        id: session.info.id,
         name: session.info.name,
       },
       games: session.games.map((game) => ({
-        id: game.id.toString(),
+        id: game.id,
         forfeitGamePoint: game.forfeit_game_point,
         playerResults: game.player_results.map((result) => ({
-          playerId: result.player_id.toString(),
+          playerId: result.player_id,
           playerName: result.player_name,
           tablePoint: result.table_point,
           gamePoint: result.game_point,

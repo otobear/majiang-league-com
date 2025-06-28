@@ -1,6 +1,6 @@
 use axum::{
     extract::State,
-    routing::{get},
+    routing::{get, post},
     Json, Router,
 };
 use serde::{Deserialize, Serialize};
@@ -137,6 +137,30 @@ struct TournamentDetail {
     sessions: Vec<SessionDetail>,
 }
 
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
+struct CreateTournamentRequest {
+    name: String,
+    sub_name: String,
+    #[schema(value_type = String, format = Date)]
+    date: NaiveDate,
+    location: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
+struct CreateGameRequest {
+    tournament_id: i32,
+    session_name: String,
+    forfeit_game_point: Option<i32>,
+    player_results: Vec<CreatePlayerResultRequest>,
+}
+
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
+struct CreatePlayerResultRequest {
+    player_id: i32,
+    game_point: i32,
+    table_point: f32,
+}
+
 async fn health() -> Json<serde_json::Value> {
     Json(serde_json::json!({ "status": "ok" }))
 }
@@ -155,8 +179,10 @@ async fn main() {
         .route("/", get(root))
         .route("/player_stats", get(get_player_stats_list))
         .route("/player_stats/:player_id", get(get_player_stats))
-        .route("/tournaments", get(get_tournaments))
-        .route("/tournaments/:tournament_id", get(get_tournament));
+        .route("/tournaments", get(get_tournaments).post(create_tournament))
+        .route("/tournaments/:tournament_id", get(get_tournament))
+        .route("/games", post(create_game))
+        .route("/players", get(get_players));
 
     // TODO: set up Swagger UI
     // let swagger_ui = SwaggerUi::new("/swagger-ui").url("/api-doc/openapi.json", ApiDoc::openapi());
@@ -198,7 +224,7 @@ async fn root() -> &'static str {
 async fn get_player_stats_list(
     State(pool): State<PgPool>,
 ) -> Json<Vec<PlayerStats>> {
-    let stats = sqlx::query_as::<_, PlayerStats>("SELECT * FROM player_stats")
+    let stats = sqlx::query_as::<_, PlayerStats>("SELECT * FROM player_stats ORDER BY player_id")
         .fetch_all(&pool)
         .await
         .expect("Failed to fetch player stats");
@@ -301,7 +327,7 @@ async fn get_player_stats(
 async fn get_tournaments(
     State(pool): State<PgPool>,
 ) -> Json<Vec<TournamentDetail>> {
-    let tournaments = sqlx::query_as::<_, Tournament>("SELECT id, name, sub_name, date, location FROM tournaments ORDER BY date DESC")
+    let tournaments = sqlx::query_as::<_, Tournament>("SELECT id, name, sub_name, date, location FROM tournaments ORDER BY id DESC")
         .fetch_all(&pool)
         .await
         .expect("Failed to fetch tournaments");
@@ -534,10 +560,124 @@ async fn get_tournament(
     Ok(Json(detail))
 }
 
+#[utoipa::path(
+    get,
+    path = "/v1/players",
+    responses(
+        (status = 200, description = "Player list", body = [Player])
+    )
+)]
+async fn get_players(
+    State(pool): State<PgPool>,
+) -> Json<Vec<Player>> {
+    let players = sqlx::query_as::<_, Player>("SELECT id, name FROM players ORDER BY name")
+        .fetch_all(&pool)
+        .await
+        .expect("Failed to fetch players");
+
+    Json(players)
+}
+
+#[utoipa::path(
+    post,
+    path = "/v1/tournaments",
+    request_body = CreateTournamentRequest,
+    responses(
+        (status = 201, description = "Tournament created", body = Tournament),
+        (status = 400, description = "Bad request")
+    )
+)]
+async fn create_tournament(
+    State(pool): State<PgPool>,
+    Json(request): Json<CreateTournamentRequest>,
+) -> Result<Json<Tournament>, axum::http::StatusCode> {
+    let tournament = sqlx::query_as::<_, Tournament>(
+        "INSERT INTO tournaments (name, sub_name, date, location) VALUES ($1, $2, $3, $4) RETURNING id, name, sub_name, date, location"
+    )
+    .bind(&request.name)
+    .bind(&request.sub_name)
+    .bind(&request.date)
+    .bind(&request.location)
+    .fetch_one(&pool)
+    .await
+    .map_err(|_| axum::http::StatusCode::BAD_REQUEST)?;
+
+    Ok(Json(tournament))
+}
+
+#[utoipa::path(
+    post,
+    path = "/v1/games",
+    request_body = CreateGameRequest,
+    responses(
+        (status = 201, description = "Game created", body = i32),
+        (status = 400, description = "Bad request")
+    )
+)]
+async fn create_game(
+    State(pool): State<PgPool>,
+    Json(request): Json<CreateGameRequest>,
+) -> Result<Json<i32>, axum::http::StatusCode> {
+    let mut tx = pool.begin().await.map_err(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR)?;
+
+    // Find or create session
+    let session_id = sqlx::query_scalar::<_, i32>(
+        "SELECT id FROM sessions WHERE tournament_id = $1 AND name = $2"
+    )
+    .bind(request.tournament_id)
+    .bind(&request.session_name)
+    .fetch_optional(&mut *tx)
+    .await
+    .map_err(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR)?;
+
+    let session_id = match session_id {
+        Some(id) => id,
+        None => {
+            sqlx::query_scalar::<_, i32>(
+                "INSERT INTO sessions (tournament_id, name) VALUES ($1, $2) RETURNING id"
+            )
+            .bind(request.tournament_id)
+            .bind(&request.session_name)
+            .fetch_one(&mut *tx)
+            .await
+            .map_err(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR)?
+        }
+    };
+
+    // Create game
+    let game_id = sqlx::query_scalar::<_, i32>(
+        "INSERT INTO games (session_id, forfeit_game_point) VALUES ($1, $2) RETURNING id"
+    )
+    .bind(session_id)
+    .bind(request.forfeit_game_point.unwrap_or(0))
+    .fetch_one(&mut *tx)
+    .await
+    .map_err(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR)?;
+
+    // Create player results
+    for player_result in request.player_results {
+        sqlx::query(
+            "INSERT INTO game_player_results (game_id, player_id, game_point, table_point) VALUES ($1, $2, $3, $4)"
+        )
+        .bind(game_id)
+        .bind(player_result.player_id)
+        .bind(player_result.game_point)
+        .bind(player_result.table_point)
+        .execute(&mut *tx)
+        .await
+        .map_err(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR)?;
+    }
+
+    tx.commit().await.map_err(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR)?;
+
+    Ok(Json(game_id))
+}
+
 #[derive(OpenApi)]
 #[openapi(
-    paths(get_player_stats_list, get_player_stats, get_tournaments, get_tournament),
+    paths(get_player_stats_list, get_player_stats, get_tournaments, get_tournament, get_players, create_tournament, create_game),
     components(schemas(
+        Player,
         PlayerStats, 
         PlayerStatsWithGames, 
         GameDetail, 
@@ -549,7 +689,10 @@ async fn get_tournament(
         RoundPoint,
         SessionDetail,
         SessionInfo,
-        GameInfo
+        GameInfo,
+        CreateTournamentRequest,
+        CreateGameRequest,
+        CreatePlayerResultRequest
     ))
 )]
 struct ApiDoc;

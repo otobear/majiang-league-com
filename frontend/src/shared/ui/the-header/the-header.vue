@@ -25,6 +25,15 @@
               対局結果
             </RouterLink>
           </Tab>
+          <Tab value="score-entry" class="ml-4 h-16">
+            <RouterLink
+              to="/score-entry"
+              class="px-4 hover:border-yellow-200 hover:text-yellow-200"
+              :class="{ '!border-yellow-200 !text-yellow-200': activeTab === 'score-entry' }"
+            >
+              成績入力
+            </RouterLink>
+          </Tab>
         </TabList>
       </Tabs>
     </nav>
@@ -44,8 +53,9 @@ const activeTab = computed(() => {
     return 'players'
   } else if (path.startsWith('/tournaments')) {
     return 'tournaments'
+  } else if (path.startsWith('/score-entry')) {
+    return 'score-entry'
   }
-
   return 'players'
 })
 </script>

@@ -38,6 +38,14 @@ const router = createRouter({
         layout: DefaultLayout,
       },
     },
+    {
+      path: '/score-entry',
+      name: 'score-entry',
+      component: () => import('@/pages/score-entry'),
+      meta: {
+        layout: DefaultLayout,
+      },
+    },
   ],
 })
 

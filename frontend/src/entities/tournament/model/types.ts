@@ -6,7 +6,7 @@ export interface IPlayerResponse {
     location: string
   }
   summary: {
-    playerId: string
+    playerId: number
     playerName: string
     tournamentPlace: number
     totalPoint: {
@@ -20,14 +20,14 @@ export interface IPlayerResponse {
   }[]
   sessions: {
     info: {
-      id: string
+      id: number
       name: string
     }
     games: {
-      id: string
+      id: number
       forfeitGamePoint: number
       playerResults: {
-        playerId: string
+        playerId: number
         playerName: string
         tablePoint: number
         gamePoint: number
@@ -38,7 +38,7 @@ export interface IPlayerResponse {
 }
 
 export interface ITournament {
-  id: string
+  id: number
   info: {
     name: string
     subName: string
@@ -46,7 +46,7 @@ export interface ITournament {
     location: string
   }
   summary: {
-    playerId: string
+    playerId: number
     playerName: string
     tournamentPlace: number
     totalPoint: {
@@ -60,14 +60,14 @@ export interface ITournament {
   }[]
   sessions: {
     info: {
-      id: string
+      id: number
       name: string
     }
     games: {
-      id: string
+      id: number
       forfeitGamePoint: number
       playerResults: {
-        playerId: string
+        playerId: number
         playerName: string
         tablePoint: number
         gamePoint: number

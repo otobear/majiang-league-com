@@ -58,7 +58,11 @@
             <span class="block text-right">{{ slotProps.data.fourthPlacePercentage.toFixed(0) }}%</span>
           </template>
         </Column>
-        <Column header="平均素点" field="gpAvg" sortable body-style="text-align: right" />
+        <Column header="平均素点" field="gpAvg" sortable>
+          <template #body="slotProps">
+            <span class="block text-right">{{ slotProps.data.gpAvg.toFixed(2) }}</span>
+          </template>
+        </Column>
       </template>
     </DataTable>
 
