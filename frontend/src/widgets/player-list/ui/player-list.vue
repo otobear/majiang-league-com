@@ -90,6 +90,7 @@ const aggregationTypeOptions = ref([
 const playersData = ref<IPlayer[]>([])
 
 onMounted(async () => {
-  playersData.value = await fetchPlayerStatsList()
+  const allPlayers = await fetchPlayerStatsList()
+  playersData.value = allPlayers.filter((player) => player.gameCount > 0)
 })
 </script>
