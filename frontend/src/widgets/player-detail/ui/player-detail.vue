@@ -2,6 +2,10 @@
   <div class="flex flex-col gap-8 rounded-lg">
     <template v-if="playerData">
       <div class="text-xl font-semibold">{{ playerData.name }}</div>
+      <div class="rounded-lg bg-blue-50 p-4 text-sm text-gray-700">
+        <p class="mb-1 font-medium text-blue-800">通算評価について</p>
+        <p>通算評価とは、一荘ごとに1位+3pt、2位+1pt、3位-1pt、4位-3ptを加算したものです。</p>
+      </div>
       <div class="flex gap-4">
         <div class="flex flex-1 gap-4">
           <StatusCard>
@@ -45,10 +49,6 @@
             <template #unit>pt</template>
           </StatusCard>
         </div>
-      </div>
-      <div class="rounded-lg bg-blue-50 p-4 text-sm text-gray-700">
-        <p class="mb-1 font-medium text-blue-800">通算評価について</p>
-        <p>通算評価とは、一荘ごとに1位+3pt、2位+1pt、3位-1pt、4位-3ptを加算したものです。</p>
       </div>
       <div class="flex gap-8">
         <div class="flex-1 rounded-lg bg-white p-8 shadow">
