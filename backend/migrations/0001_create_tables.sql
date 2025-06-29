@@ -1,3 +1,16 @@
+-- Create all database tables
+-- Combined migration for majiang league database
+
+-- Players table
+CREATE TABLE
+  IF NOT EXISTS players (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    created TIMESTAMPTZ NOT NULL DEFAULT NOW (),
+    updated TIMESTAMPTZ NOT NULL DEFAULT NOW ()
+  );
+
+-- Tournaments table
 CREATE TABLE
   IF NOT EXISTS tournaments (
     id SERIAL PRIMARY KEY,
@@ -9,6 +22,7 @@ CREATE TABLE
     updated TIMESTAMPTZ NOT NULL DEFAULT NOW ()
   );
 
+-- Sessions table (depends on tournaments)
 CREATE TABLE
   IF NOT EXISTS sessions (
     id SERIAL PRIMARY KEY,
@@ -16,6 +30,7 @@ CREATE TABLE
     name TEXT NOT NULL
   );
 
+-- Games table (depends on sessions)
 CREATE TABLE
   IF NOT EXISTS games (
     id SERIAL PRIMARY KEY,
@@ -23,6 +38,7 @@ CREATE TABLE
     forfeit_game_point INTEGER DEFAULT 0
   );
 
+-- Game player results table (depends on games and players)
 CREATE TABLE
   IF NOT EXISTS game_player_results (
     id SERIAL PRIMARY KEY,
@@ -32,6 +48,7 @@ CREATE TABLE
     table_point FLOAT4 NOT NULL
   );
 
+-- Player statistics view
 CREATE VIEW
   player_stats AS
 SELECT
@@ -58,3 +75,4 @@ FROM
 GROUP BY
   p.id,
   p.name;
+

@@ -394,7 +394,6 @@ async fn get_tournament_detail(pool: &PgPool, tournament_id: i32) -> Result<Tour
     #[derive(sqlx::FromRow)]
     struct RoundPointRow {
         player_id: i32,
-        session_name: String,
         session_table_point: Option<f32>,
         session_game_point: Option<i64>,
     }
