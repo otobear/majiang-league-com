@@ -3,9 +3,9 @@
     <TournamentSummaryTable :tournament="tournament" />
     <RouterLink
       :to="{ name: 'tournament', params: { id: tournament.id } }"
-      class="flex flex-row-reverse gap-1 text-green-600 hover:text-green-800"
+      class="flex flex-row-reverse items-center gap-1 text-green-600 hover:text-green-800"
     >
-      <i class="material-symbols-outlined">arrow_forward</i>
+      <i class="pi pi-arrow-right text-green-600"></i>
       <span>詳細を見る</span>
     </RouterLink>
   </div>

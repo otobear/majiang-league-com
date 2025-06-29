@@ -30,7 +30,7 @@
           </StatusCard>
           <StatusCard>
             <template #icon>
-              <i class="pi pi-star text-2xl text-gray-600"></i>
+              <i class="pi pi-calculator text-2xl text-gray-600"></i>
             </template>
             <template #label>通算素点</template>
             <template #value>{{ playerData.gpTotal }}</template>
@@ -212,13 +212,13 @@
               <RouterLink
                 v-if="slotProps.data.game1"
                 :to="{ name: 'tournament', params: { id: slotProps.data.game1.tournamentId } }"
-                class="flex justify-between"
+                class="flex items-center justify-between"
               >
                 <div class="text-sm text-gray-600">{{ formatDate(slotProps.data.game1.tournamentDate) }}</div>
                 <div class="text-right font-medium">
                   {{ slotProps.data.game1.gamePoint }} / {{ slotProps.data.game1.tablePoint }}
                 </div>
-                <i class="material-symbols-outlined text-sm text-green-600">arrow_forward</i>
+                <i class="pi pi-arrow-right text-sm text-green-600"></i>
               </RouterLink>
             </template>
           </Column>
@@ -234,13 +234,13 @@
               <RouterLink
                 v-if="slotProps.data.game2"
                 :to="{ name: 'tournament', params: { id: slotProps.data.game2.tournamentId } }"
-                class="flex justify-between"
+                class="flex items-center justify-between"
               >
                 <div class="text-sm text-gray-600">{{ formatDate(slotProps.data.game2.tournamentDate) }}</div>
                 <div class="text-right font-medium">
                   {{ slotProps.data.game2.gamePoint }} / {{ slotProps.data.game2.tablePoint }}
                 </div>
-                <i class="material-symbols-outlined text-sm text-green-600">arrow_forward</i>
+                <i class="pi pi-arrow-right text-sm text-green-600"></i>
               </RouterLink>
             </template>
           </Column>
