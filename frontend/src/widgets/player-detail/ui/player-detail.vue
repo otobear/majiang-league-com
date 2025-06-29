@@ -252,7 +252,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { Column, DataTable } from 'primevue'
 import { fetchPlayerStatsById } from '@/entities/player'
@@ -440,7 +440,22 @@ const formatDate = (dateString: string) => {
   })
 }
 
+const loadPlayerData = async (playerId: number) => {
+  playerData.value = null // Show loading state
+  playerData.value = await fetchPlayerStatsById(playerId)
+}
+
 onMounted(async () => {
-  playerData.value = await fetchPlayerStatsById(route.params.id as unknown as number)
+  await loadPlayerData(route.params.id as unknown as number)
 })
+
+// Watch for route parameter changes
+watch(
+  () => route.params.id,
+  async (newId) => {
+    if (newId) {
+      await loadPlayerData(newId as unknown as number)
+    }
+  }
+)
 </script>
