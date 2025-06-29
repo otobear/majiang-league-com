@@ -1,9 +1,9 @@
 <template>
-  <header class="flex h-16 items-center bg-green-600 px-6 text-white shadow">
-    <RouterLink to="/" class="inline-flex h-16 flex-1 items-center gap-4">
+  <header class="flex h-16 items-center gap-4 bg-green-600 px-6 text-white shadow">
+    <RouterLink to="/" class="inline-flex h-16 items-center gap-4">
       <img alt="Logo" src="@/shared/assets/logo.png" class="h-8 w-8" />
-      <h1 class="text-2xl font-bold">ちゅんま関東リーグ</h1>
     </RouterLink>
+    <h1 class="flex-1 text-2xl font-bold">ちゅんま関東リーグ</h1>
     <nav>
       <Tabs :value="activeTab" unstyled class="bg-green-600">
         <TabList>

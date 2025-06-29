@@ -1,5 +1,9 @@
 <template>
   <div v-if="playersData && playersData.length" class="flex flex-col gap-4 rounded-lg bg-white p-8 shadow">
+    <div class="rounded-lg bg-blue-50 p-4 text-sm text-gray-700">
+      <p class="mb-1 font-medium text-blue-800">通算評価について</p>
+      <p>通算評価とは、一荘ごとに1位3pt、2位1pt、3位-1pt、4位-3ptを加算したものです。</p>
+    </div>
     <SelectButton
       v-model="aggregationType"
       :options="aggregationTypeOptions"
@@ -65,11 +69,6 @@
         </Column>
       </template>
     </DataTable>
-
-    <div class="rounded-lg bg-blue-50 p-4 text-sm text-gray-700">
-      <p class="mb-1 font-medium text-blue-800">通算評価について</p>
-      <p>通算評価とは、一荘ごとに1位3pt、2位1pt、3位-1pt、4位-3ptを加算したものです。</p>
-    </div>
   </div>
 
   <LoadingSpinner v-else />
