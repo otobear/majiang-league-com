@@ -50,7 +50,11 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  // Add any global navigation guards here if needed
+  if (to.path === '/score-entry' && import.meta.env.PROD) {
+    next('/players')
+    return
+  }
+
   next()
 })
 

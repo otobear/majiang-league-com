@@ -25,7 +25,7 @@
               対局結果
             </RouterLink>
           </Tab>
-          <Tab value="score-entry" class="ml-4 h-16">
+          <Tab v-if="isDevelopment" value="score-entry" class="ml-4 h-16">
             <RouterLink
               to="/score-entry"
               class="px-4 hover:border-yellow-200 hover:text-yellow-200"
@@ -46,6 +46,10 @@ import { useRoute } from 'vue-router'
 import { Tab, TabList, Tabs } from 'primevue'
 
 const route = useRoute()
+
+const isDevelopment = computed(() => {
+  return import.meta.env.MODE === 'development' || import.meta.env.DEV
+})
 
 const activeTab = computed(() => {
   const path = route.path
