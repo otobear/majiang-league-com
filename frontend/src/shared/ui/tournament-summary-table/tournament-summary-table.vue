@@ -52,14 +52,14 @@
         <Column>
           <template #body="slotProps">
             <span class="block text-right">
-              {{ slotProps.data.roundPoint[roundIndex - 1].gamePoint }}
+              {{ slotProps.data.roundPoint[roundIndex - 1]?.gamePoint || '-' }}
             </span>
           </template>
         </Column>
         <Column>
           <template #body="slotProps">
             <span class="block text-right font-bold">
-              {{ slotProps.data.roundPoint[roundIndex - 1].tablePoint }}
+              {{ slotProps.data.roundPoint[roundIndex - 1]?.tablePoint || '-' }}
             </span>
           </template>
         </Column>

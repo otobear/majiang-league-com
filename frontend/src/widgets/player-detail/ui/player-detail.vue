@@ -335,13 +335,11 @@ const seatStats = computed(() => {
   }
 
   playerData.value.gameDetails.forEach((game) => {
-    const sortedPlayers = [...game.players].sort((a, b) => a.playerId - b.playerId)
-
-    const playerIndex = sortedPlayers.findIndex((p) => p.playerId === playerData.value?.id)
+    const playerIndex = game.players.findIndex((p) => p.playerId === playerData.value?.id)
 
     if (playerIndex !== -1) {
       const seatName = seatNames[playerIndex] as keyof typeof seatData
-      const playerResult = sortedPlayers[playerIndex]
+      const playerResult = game.players[playerIndex]
 
       seatData[seatName].count++
       const place = 5 - playerResult.tablePoint
